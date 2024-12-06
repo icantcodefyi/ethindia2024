@@ -15,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Bitcoin4Babies",
-  description: "A Bitcoin playground for cryptobabies",
+  title: "chill guy with eth",
+  description: "A eth playground for cryptobabies",
 };
 export default function RootLayout({
   children,
