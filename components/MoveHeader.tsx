@@ -1,10 +1,15 @@
 import React from "react";
-import WalletConnector from "./WalletConnector";
-import { IconCurrencyEthereum } from "@tabler/icons-react";
+import { WalletSelector } from "./WalletSelector";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
-const Header = () => {
+const MoveHeader = () => {
+  const { network } = useWallet();
+
+  const isTestnet = network?.name?.toLowerCase().includes("testnet");
+  const networkName = network?.name || "Not Connected";
+
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] bg-background backdrop-blur-md border-b border-primary/20">
       <div className="max-w-7xl mx-auto h-16 px-6">
@@ -20,20 +25,21 @@ const Header = () => {
             )}
           >
             <div className="relative">
-              <IconCurrencyEthereum size={28} className="text-primary" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://supra.com/images/brand/SupraOracles-Red-Light-Symbol.svg" width={28} height={28} alt="Supra Logo" />
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-bold text-xl tracking-tight text-foreground">
                 ContractCraft
               </span>
               <span className="text-xs font-medium text-muted-foreground tracking-tight">
-                Build Smart Contracts Visually
+                Move Smart Contract Platform
               </span>
             </div>
           </Link>
 
           {/* Network Status + Wallet */}
-          <div className="flex items-center gap-4 mr-[100px]">
+          <div className="flex items-center gap-4">
             <div
               className={cn(
                 "hidden sm:flex items-center gap-2 px-4 py-2",
@@ -42,10 +48,15 @@ const Header = () => {
                 "font-medium text-sm text-foreground"
               )}
             >
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span>Testnet</span>
+              <div 
+                className={cn(
+                  "w-2 h-2 rounded-full animate-pulse",
+                  isTestnet ? "bg-yellow-500" : "bg-green-500"
+                )} 
+              />
+              <span>{networkName}</span>
             </div>
-            <WalletConnector />
+            <WalletSelector />
           </div>
         </div>
       </div>
@@ -53,4 +64,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default MoveHeader; 

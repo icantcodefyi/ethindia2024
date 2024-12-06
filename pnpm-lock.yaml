@@ -131,6 +131,9 @@ importers:
       '@rise-wallet/wallet-adapter':
         specifier: ^0.1.2
         version: 0.1.2
+      '@tabler/icons-react':
+        specifier: ^3.24.0
+        version: 3.24.0(react@19.0.0-rc-66855b96-20241106)
       '@tanstack/react-query':
         specifier: ^5.59.20
         version: 5.62.2(react@19.0.0-rc-66855b96-20241106)
@@ -3147,6 +3150,14 @@ packages:
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
+
+  '@tabler/icons-react@3.24.0':
+    resolution: {integrity: sha512-m9c7TmlcDmKqvZAasG5rv1YvazZDrVEhNdNFa2d1Bzotc0dh+iceFdiZCEcYPDb5UcRyLAMvOaOC9y/5sfMMWw==}
+    peerDependencies:
+      react: '>= 16'
+
+  '@tabler/icons@3.24.0':
+    resolution: {integrity: sha512-qNis9e90QcdxAGV3wNIeX0Ba2R7ktm0cnqOToKHJfC2kj3fvJwEVLsw63K0/fm7NW8rSZjDSTQRmMnSg8g/wrg==}
 
   '@tanstack/query-core@5.62.1':
     resolution: {integrity: sha512-thYv90GkMcfumgmtp6sptC18SqxWwXTCKUuk7jyeHHn7kYouh0VJrowuuBffAIBiR3Z8OnsccmPUnP1leKJBVQ==}
@@ -11609,6 +11620,13 @@ snapshots:
   '@szmarczak/http-timer@4.0.6':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tabler/icons-react@3.24.0(react@19.0.0-rc-66855b96-20241106)':
+    dependencies:
+      '@tabler/icons': 3.24.0
+      react: 19.0.0-rc-66855b96-20241106
+
+  '@tabler/icons@3.24.0': {}
 
   '@tanstack/query-core@5.62.1': {}
 

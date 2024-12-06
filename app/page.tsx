@@ -1,192 +1,183 @@
-import {
-  Bitcoin,
-  ArrowRight,
-  ArrowRightLeft,
-  Coins,
-  Shield,
-} from "lucide-react";
+import { ArrowRight, ArrowRightLeft, Coins, Shield } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { IconCurrencyEthereum } from "@tabler/icons-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 grid grid-cols-10 gap-4 p-4 opacity-[0.05]">
-        {Array.from({ length: 100 }).map((_, i) => (
-          <Bitcoin key={i} size={24} className="text-primary rotate-12" />
+    <div className="min-h-screen bg-gradient-to-b from-background via-background/90 to-black relative overflow-hidden">
+      {/* Background Pattern - adjusted opacity and spacing */}
+      <div className="absolute inset-0 grid grid-cols-12 gap-6 p-6 opacity-[0.04]">
+        {Array.from({ length: 120 }).map((_, i) => (
+          <IconCurrencyEthereum key={i} size={28} className="text-primary/80" />
         ))}
       </div>
 
-      {/* Main Content */}
-      <div className="relative max-w-6xl mx-auto px-4 pt-32 pb-20">
-        <div className="space-y-8 text-center">
-          {/* Logo Section */}
-          <div
-            className={cn(
-              "inline-flex items-center gap-3 px-6 py-3",
-              "bg-card border-2 border-primary rounded-2xl",
-              "shadow-[6px_6px_0_0_hsl(var(--primary))]",
-              "hover:shadow-[8px_8px_0_0_hsl(var(--primary))]",
-              "hover:translate-y-[-4px]",
-              "transition-all duration-200",
-              "mb-8"
-            )}
-          >
+      {/* Main Content - improved spacing */}
+      <div className="relative max-w-7xl mx-auto px-6 pt-40 pb-24">
+        <div className="space-y-12 text-center">
+          {/* Logo Section - enhanced backdrop blur and glow */}
+          <div className="inline-flex items-center gap-4 px-8 py-4 bg-black/30 backdrop-blur-md rounded-2xl border border-primary/30 shadow-lg shadow-primary/5">
             <div className="relative">
-              <Bitcoin size={48} className="text-primary" />
-              <span className="absolute -top-1 -right-1 text-lg font-black">
-                4
-              </span>
+              <IconCurrencyEthereum size={52} className="text-primary" />
+              <div className="absolute inset-0 blur-2xl bg-primary/20"></div>
             </div>
             <div className="flex flex-col items-start">
-              <span className="font-black text-3xl tracking-tight">
-                Chill with BTC
+              <span className="text-primary text-3xl font-bold tracking-tight">
+                ContractCraft
               </span>
-              <span className="text-sm font-bold text-muted-foreground">
-                vibes
+              <span className="text-sm font-medium text-muted-foreground/90">
+                Build Smart Contracts Visually
               </span>
             </div>
           </div>
 
-          {/* Hero Section */}
-          <h1 className="text-6xl sm:text-7xl font-black text-foreground max-w-3xl mx-auto leading-tight">
-            Bitcoin Made Easy <br /> No Stress 😎
+          {/* Hero Section - improved typography and spacing */}
+          <h1 className="text-7xl sm:text-8xl font-bold text-primary bg-clip-text max-w-4xl mx-auto leading-tight tracking-tight">
+            Smart Contracts <br /> Made Visual
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-            Kick back and learn Bitcoin your way. Our chill drag-and-drop
-            interface makes it super easy to understand how Bitcoin flows. No
-            pressure, just good vibes.
+          <p className="text-xl text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed">
+            Create EVM and Move smart contracts with our intuitive drag-and-drop
+            interface. Build, deploy, and innovate without writing a single line
+            of code.
           </p>
 
-          {/* CTA Button */}
-          <div className="flex justify-center gap-4 pt-8">
-            <Link href="/home">
-              <Button
-                className={cn(
-                  "bg-primary text-primary-foreground border-2 border-primary rounded-xl",
-                  "text-lg font-bold px-8 py-6",
-                  "shadow-[6px_6px_0_0_hsl(var(--primary))]",
-                  "hover:shadow-[8px_8px_0_0_hsl(var(--primary))]",
-                  "hover:translate-y-[-4px]",
-                  "transition-all duration-200",
-                  "flex items-center gap-2"
-                )}
-              >
-                Start Your Journey
-                <ArrowRight size={20} />
-              </Button>
-            </Link>
+          {/* CTA Button - enhanced hover effects */}
+          <div className="flex justify-center gap-4 pt-12">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold 
+                  px-10 py-7 rounded-xl backdrop-blur-sm flex items-center gap-3 
+                  transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/20"
+                >
+                  Start Building
+                  <ArrowRight size={22} />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-black/95 backdrop-blur-md border border-primary/30">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold mb-8">
+                    Choose Your Chain
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-row gap-6">
+                  <Link href="/move" className="w-full">
+                    <Button 
+                      className="w-full bg-secondary/80 hover:bg-secondary text-primary-foreground 
+                      text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
+                      hover:scale-105 hover:shadow-lg hover:shadow-secondary/20"
+                    >
+                      Move Protocol
+                    </Button>
+                  </Link>
+                  <Link href="/home" className="w-full">
+                    <Button 
+                      className="w-full bg-primary/80 hover:bg-primary text-primary-foreground 
+                      text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
+                      hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
+                    >
+                      EVM Chain
+                    </Button>
+                  </Link>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-20">
+          {/* Features Grid - improved cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-32">
             {[
               {
-                title: "Learn by Doing",
+                title: "Visual Contract Building",
                 description:
-                  "Get hands-on with Bitcoin - no textbooks, just interactive vibes",
-                icon: Bitcoin,
+                  "Create complex smart contracts through an intuitive drag-and-drop interface",
+                icon: IconCurrencyEthereum,
+                gradient: "from-primary to-primary/70"
               },
               {
-                title: "Instant Feedback",
-                description:
-                  "Watch your moves come to life in real-time as you build",
+                title: "Multi-Chain Support",
+                description: "Deploy to EVM chains and Move protocol with ease",
                 icon: ArrowRightLeft,
+                gradient: "from-secondary to-secondary/70"
               },
               {
-                title: "Zero Pressure",
+                title: "Security First",
                 description:
-                  "No coding needed - just flow with it and learn at your own pace",
+                  "Built-in security checks and best practices for safe contract deployment",
                 icon: Shield,
+                gradient: "from-primary/90 to-secondary/90"
               },
             ].map((feature, index) => (
               <div
                 key={index}
-                className={cn(
-                  "bg-card p-6 rounded-xl",
-                  "border-2 border-primary",
-                  "shadow-[4px_4px_0_0_hsl(var(--primary))]",
-                  "hover:shadow-[6px_6px_0_0_hsl(var(--primary))]",
-                  "hover:translate-y-[-2px]",
-                  "transition-all duration-200"
-                )}
+                className="bg-black/30 backdrop-blur-md p-8 rounded-xl border border-primary/20 
+                hover:border-primary/40 transition-all duration-300 hover:transform hover:scale-105
+                hover:shadow-lg hover:shadow-primary/10"
               >
-                <feature.icon size={24} className="mb-4 text-primary" />
-                <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <div className={`bg-gradient-to-br ${feature.gradient} p-3 rounded-lg w-fit mb-6`}>
+                  <feature.icon size={28} className="text-primary-foreground" />
+                </div>
+                <h3 className="font-bold text-xl mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground/90 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
 
-          {/* Built with BOB Section */}
-          <div className="pt-32">
+          {/* Integration Section - enhanced visuals */}
+          <div className="pt-40">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Powered by BOB</h2>
+              <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+                Powered by Advanced Tech
+              </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                We&apos;ve teamed up with BOB Gateway to make Bitcoin to Layer 2
-                bridging smooth as butter. Learn the cool stuff about intents
-                and bridging while staying relaxed.
+                Built with cutting-edge blockchain technology to ensure smooth
+                contract deployment and cross-chain compatibility.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* BOB Features */}
-              <div
-                className={cn(
-                  "bg-card p-8 rounded-xl",
-                  "border-2 border-primary",
-                  "shadow-[4px_4px_0_0_hsl(var(--primary))]",
-                  "hover:shadow-[6px_6px_0_0_hsl(var(--primary))]",
-                  "hover:translate-y-[-2px]",
-                  "transition-all duration-200"
-                )}
-              >
+              <div className="bg-black/20 backdrop-blur-sm p-8 rounded-xl border border-primary/20 hover:border-primary/40 transition-all duration-300">
                 <Coins size={32} className="mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-4">
-                  BOB&apos;s Got Your Back
-                </h3>
+                <h3 className="text-xl font-bold mb-4">Advanced Features</h3>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <ArrowRight size={16} className="text-primary" />
-                    Smooth Layer 2 bridging
+                    Multi-chain deployment support
                   </li>
                   <li className="flex items-center gap-2">
                     <ArrowRight size={16} className="text-primary" />
-                    Build transactions visually
+                    Visual contract builder
                   </li>
                   <li className="flex items-center gap-2">
                     <ArrowRight size={16} className="text-primary" />
-                    Live transaction preview
+                    Real-time contract simulation
                   </li>
                   <li className="flex items-center gap-2">
                     <ArrowRight size={16} className="text-primary" />
-                    Easy verification tools
+                    Security audit tools
                   </li>
                 </ul>
               </div>
 
-              {/* Integration Preview */}
-              <div
-                className={cn(
-                  "bg-card p-8 rounded-xl",
-                  "border-2 border-primary",
-                  "shadow-[4px_4px_0_0_hsl(var(--primary))]",
-                  "hover:shadow-[6px_6px_0_0_hsl(var(--primary))]",
-                  "hover:translate-y-[-2px]",
-                  "transition-all duration-200",
-                  "flex items-center justify-center"
-                )}
-              >
+              <div className="bg-black/20 backdrop-blur-sm p-8 rounded-xl border border-primary/20 hover:border-primary/40 transition-all duration-300 flex items-center justify-center">
                 <div className="text-center">
                   <div className="inline-flex items-center gap-2 mb-4">
-                    <Bitcoin size={24} className="text-primary" />
+                    <IconCurrencyEthereum size={24} className="text-primary" />
                     <ArrowRight size={24} />
-                    <span className="font-bold text-2xl">BOB</span>
+                    <span className="font-bold text-2xl bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+                      Deploy
+                    </span>
                   </div>
                   <p className="text-muted-foreground">
-                    Bridge like a pro with our laid-back, easy-to-use interface
+                    From visual design to live deployment in minutes
                   </p>
                 </div>
               </div>
@@ -195,9 +186,11 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 text-center text-muted-foreground font-medium">
-        Built with good vibes ✌️ powered by BOB
+      {/* Footer - improved styling */}
+      <div className="absolute bottom-0 left-0 right-0 p-8 text-center">
+        <span className="text-muted-foreground/80 font-medium bg-black/20 px-6 py-3 rounded-full backdrop-blur-sm">
+          Built for the future of Web3 🌐
+        </span>
       </div>
     </div>
   );
