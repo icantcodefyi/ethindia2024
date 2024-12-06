@@ -1,16 +1,18 @@
 import { createThirdwebClient } from "thirdweb";
 import { createWallet } from "thirdweb/wallets";
 import { useState, useCallback } from 'react';
-import { useActiveAccount } from "thirdweb/react";
+import { useActiveAccount, useConnect } from "thirdweb/react";
+
+export type Providers = "thirdweb" | "okto" | "cdk";
 
 interface Wallet {
     address: string;
-    providerName: "thirdweb" | "cdk";
+    providerName: Providers;
 }
 
 interface UseWalletReturn {
     wallet: Wallet | null;
-    connect: (providerName: "thirdweb" | "cdk") => Promise<void>;
+    connect: (providerName: Providers) => Promise<void>;
     disconnect: () => void;
     isConnecting: boolean;
     error: Error | null;
@@ -21,43 +23,40 @@ export function useWallet(): UseWalletReturn {
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const thirdwebAddress = useActiveAccount();
+    const thirdwebConnect = useConnect();
 
-    const connect = useCallback(async (providerName: "thirdweb" | "cdk") => {
+    const connect = useCallback(async (providerName: Providers) => {
         setIsConnecting(true);
         setError(null);
 
         try {
             if (providerName === "thirdweb") {
-                const client = createThirdwebClient({
-                    clientId: "07edaeb20640aa496191f50d884c2dda",
-                });
-
+                console.log("Clicked thirdweb")
                 const metamaskWallet = createWallet("io.metamask");
-
-                await metamaskWallet.connect({
-                    client,
-                    walletConnect: {
-                        projectId: "07edaeb20640aa496191f50d884c2dda",
-                        showQrModal: true,
-                        appMetadata: {
-                            name: "My App",
-                            url: "https://my-app.com",
-                            description: "my app description",
-                            logoUrl: "https://path/to/my-app/logo.svg",
-                        },
-                    },
-                });
+                await thirdwebConnect.connect(metamaskWallet);
 
                 setWallet({
                     address: thirdwebAddress?.address || "",
                     providerName: "thirdweb"
                 });
-            } else {
-                // CDK connection logic would go here
-                // This is just a placeholder - implement actual CDK connection
-                const mockAddress = "0x..."; // Replace with actual CDK connection
+            } else if (providerName === "okto") {
+                const client = createThirdwebClient({
+                    clientId: "07edaeb20640aa496191f50d884c2dda",
+                });
+
+                const oktoWallet = createWallet("tech.okto");
+
+                await oktoWallet.connect({
+                    client,
+                });
+
                 setWallet({
-                    address: mockAddress,
+                    address: thirdwebAddress?.address || "",
+                    providerName: "okto"
+                });
+            } else if (providerName === "cdk") {
+                setWallet({
+                    address: "mock-cdk-address",
                     providerName: "cdk"
                 });
             }
@@ -66,7 +65,7 @@ export function useWallet(): UseWalletReturn {
         } finally {
             setIsConnecting(false);
         }
-    }, []);
+    }, [thirdwebAddress]);
 
     const disconnect = useCallback(() => {
         setWallet(null);

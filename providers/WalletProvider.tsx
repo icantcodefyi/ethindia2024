@@ -1,13 +1,13 @@
 "use client";
 import { createContext, useContext, ReactNode } from 'react';
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet, type Providers } from '@/hooks/useWallet';
 
 interface WalletContextValue {
   wallet: {
     address: string;
-    providerName: "thirdweb" | "cdk";
+    providerName: Providers;
   } | null;
-  connect: (providerName: "thirdweb" | "cdk") => Promise<void>;
+  connect: (providerName: Providers) => Promise<void>;
   disconnect: () => void;
   isConnecting: boolean;
   error: Error | null;
