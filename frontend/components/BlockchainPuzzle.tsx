@@ -92,7 +92,7 @@ const ScrollableArea: React.FC<{
       <ScrollArea
         className={cn("w-full whitespace-nowrap rounded-lg", className)}
       >
-        <div ref={scrollRef} className="flex gap-6 px-12">
+        <div ref={scrollRef} className="flex gap-6 px-12 min-h-[200px] items-center">
           {children}
         </div>
         <ScrollBar orientation="horizontal" className="bg-gray-200" />
@@ -107,9 +107,9 @@ const AvailablePieces: React.FC<{
   const technologies = getAvailableTechnologies();
 
   return (
-    <Card className="bg-white border-2 border-black rounded-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[-2px] transition-all duration-300">
+    <Card className="bg-black/30 backdrop-blur-md border border-primary/30 rounded-xl shadow-lg shadow-primary/5 hover:shadow-xl hover:shadow-primary/20 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="text-black font-bold text-2xl">
+        <CardTitle className="text-primary font-bold text-2xl">
           Available Pieces
         </CardTitle>
       </CardHeader>
@@ -121,12 +121,11 @@ const AvailablePieces: React.FC<{
                 key={tech}
                 value={tech}
                 className={cn(
-                  "border-2 border-black rounded-xl",
-                  "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-                  "hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-                  "hover:translate-y-[-2px]",
+                  "border border-primary/30 rounded-xl",
+                  "bg-black/30 backdrop-blur-sm",
+                  "hover:bg-primary/20",
                   "transition-all duration-200",
-                  "data-[state=active]:bg-black data-[state=active]:text-white",
+                  "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
                   "flex items-center gap-2",
                   "p-2"
                 )}
@@ -140,10 +139,10 @@ const AvailablePieces: React.FC<{
             <TabsContent
               key={tech}
               value={tech}
-              className="mt-6 border-2 border-black rounded-xl p-4"
+              className="mt-6 border border-primary/30 rounded-xl p-4 bg-black/20 backdrop-blur-sm min-h-[200px]"
             >
               <ScrollableArea>
-                <div className="flex gap-6">
+                <div className="flex items-center justify-center gap-6 h-full">
                   {getBlocksByTechnology(tech).map((block) => (
                     <div key={block.id} className="flex-shrink-0">
                       <PuzzlePiece
@@ -217,10 +216,10 @@ const BlockchainPuzzle: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDFA] p-8">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background/90 to-black relative p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <p className="text-gray-600 font-medium text-lg">
+          <p className="text-muted-foreground/90 font-medium text-lg mt-[70px]">
             Drag and drop blocks to create your blockchain flow
           </p>
         </div>
@@ -229,12 +228,12 @@ const BlockchainPuzzle: React.FC = () => {
         <AvailablePieces onDragStart={handleDragStart} />
         {/* Building Area with Scroll Buttons */}
         <Card
-          className="bg-white border-2 border-black rounded-xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-[-2px] transition-all duration-300"
+          className="bg-black/30 backdrop-blur-md border border-primary/30 rounded-xl shadow-lg shadow-primary/5 hover:shadow-xl hover:shadow-primary/20 transition-all duration-300"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-black font-bold text-2xl">
+            <CardTitle className="text-primary font-bold text-2xl">
               Your Chain
             </CardTitle>
             <Button
@@ -242,17 +241,13 @@ const BlockchainPuzzle: React.FC = () => {
               size="sm"
               onClick={resetChain}
               className={cn(
-                "bg-white border-2 border-black",
-                "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-                "hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-                "hover:translate-y-[-2px]",
+                "bg-black/30 backdrop-blur-sm border border-primary/30",
+                "hover:bg-primary/20",
                 "transition-all duration-200",
-                "text-black font-bold",
-                chainBlocks.length === 0 && "opacity-50 cursor-not-allowed"
+                "text-primary font-bold"
               )}
-              disabled={chainBlocks.length === 0}
             >
-              <RotateCcw size={16} className="mr-2" />
+              <RotateCcw className="w-4 h-4 mr-2" />
               Reset Chain
             </Button>
           </CardHeader>

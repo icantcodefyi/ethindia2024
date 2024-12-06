@@ -149,8 +149,10 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
         <use
           href={`#piece-${position}`}
           className={cn(
-            "fill-white stroke-2",
-            isGreyedOut ? "stroke-gray-300" : "stroke-black"
+            "stroke-2",
+            isGreyedOut
+              ? "fill-foreground/10 stroke-primary/30"
+              : "fill-foreground/10 stroke-primary/80 backdrop-blur-md"
           )}
           transform={
             isChainPiece
@@ -172,13 +174,13 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
               size={32}
               className={cn(
                 "mb-2",
-                isGreyedOut ? "text-gray-400" : "text-black"
+                isGreyedOut ? "text-primary/30" : "text-primary"
               )}
             />
             <span
               className={cn(
                 "font-bold text-sm mb-4 text-center truncate",
-                isGreyedOut ? "text-gray-400" : "text-black"
+                isGreyedOut ? "text-primary/30" : "text-primary"
               )}
             >
               {block.name}
@@ -188,7 +190,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
               <div className="w-full space-y-4">
                 {block.inputs.map((input, idx) => (
                   <div key={idx} className="w-full px-4">
-                    <label className="text-xs font-semibold mb-1.5 block truncate text-gray-600">
+                    <label className="text-xs font-semibold mb-1.5 block truncate text-muted-foreground">
                       {input.label}
                     </label>
                     <div className="relative">
@@ -210,7 +212,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
 
       {/* Show incompatible indicator with tooltip for non-chain pieces */}
       {!isChainPiece && isGreyedOut && (
-        <div className="absolute -top-2 -right-2 bg-black text-white text-xs px-2 py-1 rounded-full border-2 border-white shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+        <div className="absolute -top-2 -right-2 bg-black/80 text-primary-foreground text-xs px-2 py-1 rounded-full border border-primary/30 shadow-lg shadow-primary/20">
           Not Compatible
         </div>
       )}
@@ -225,10 +227,11 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
           }}
           className={cn(
             "absolute -top-2 -right-2 rounded-full h-6 w-6 p-0",
-            "border-2 border-black",
-            "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-            "hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-            "hover:translate-y-[-2px]",
+            "border border-primary/30",
+            "bg-black/80 text-primary-foreground",
+            "shadow-lg shadow-primary/20",
+            "hover:bg-primary/20",
+            "hover:scale-110",
             "transition-all duration-200",
             "opacity-0 group-hover:opacity-100"
           )}
@@ -263,7 +266,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
           </TooltipTrigger>
           <TooltipContent
             side="bottom"
-            className="bg-black text-white border-2 border-white p-2 text-xs font-medium"
+            className="bg-black/80 text-primary-foreground border border-primary/30 p-2 text-xs font-medium shadow-lg shadow-primary/20"
           >
             {getCompatibleBlocks()}
           </TooltipContent>

@@ -6,7 +6,6 @@ import {
   FileCode,
   Send,
 } from "lucide-react";
-import { Network } from "@glittr-sdk/sdk";
 
 interface BlockType {
   id: string;
@@ -194,49 +193,6 @@ export const blocks: BlockType[] = [
       },
     ],
     compatibleWith: [],
-  },
-  {
-    id: "glittr_contract",
-    name: "Create Contract",
-    color: "from-blue-400 to-blue-600",
-    icon: FileCode,
-    description: "Create a new Glittr contract",
-    category: "contract",
-    technology: "Glittr",
-    inputs: [
-      {
-        type: "text",
-        label: "WIF",
-        placeholder: "Private key in WIF format",
-        required: true,
-      },
-      {
-        type: "select",
-        label: "Network",
-        options: ["regtest", "testnet", "mainnet"],
-        required: true,
-        defaultValue: "regtest",
-      },
-      {
-        type: "number",
-        label: "Supply Cap",
-        placeholder: "2000",
-        required: true,
-      },
-      {
-        type: "number",
-        label: "Divisibility",
-        placeholder: "18",
-        required: true,
-      },
-      {
-        type: "number",
-        label: "Amount Per Mint",
-        placeholder: "2",
-        required: true,
-      },
-    ],
-    compatibleWith: ["glittr_validate"],
   },
 ];
 
