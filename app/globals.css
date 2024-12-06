@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '@coinbase/onchainkit/styles.css';
 
 body {
   font-family: Arial, Helvetica, sans-serif;

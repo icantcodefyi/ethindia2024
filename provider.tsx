@@ -1,7 +1,12 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { base } from 'viem/chains';
 import { Network, SatsWagmiConfig } from "@gobob/sats-wagmi";
+import { ThirdwebProvider } from "thirdweb/react";
+import { OnchainKitProvider } from '@coinbase/onchainkit';
+
 const queryClient = new QueryClient();
+
 export default function Provider({
   children,
 }: Readonly<{
@@ -9,9 +14,13 @@ export default function Provider({
 }>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <SatsWagmiConfig network={"testnet" as Network} queryClient={queryClient}>
-        {children}
-      </SatsWagmiConfig>
+      <ThirdwebProvider>
+        <OnchainKitProvider apiKey="uaBZtCjdJYxz2ViQAjIaEq2e5RDirLBY" chain={base}>
+          <SatsWagmiConfig network={"testnet" as Network} queryClient={queryClient}>
+            {children}
+          </SatsWagmiConfig>
+        </OnchainKitProvider>
+      </ThirdwebProvider>
     </QueryClientProvider>
   );
 }
