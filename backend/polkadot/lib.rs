@@ -225,12 +225,15 @@ mod polkadot {
             
             // Get current liquidity (if any)
             let current_balance = self.swap_pairs
-                .get(&(caller, caller))  // Using (caller, caller) as special case for base token
+                .get((caller, caller))
                 .unwrap_or(0);
             
-            // Add minted amount to caller's balance
+            // Add minted amount to caller's balance using checked_add
+            let new_balance = current_balance.checked_add(amount)
+                .ok_or(Error::InsufficientBalance)?;
+            
             self.swap_pairs
-                .insert(&(caller, caller), &(current_balance + amount));
+                .insert((caller, caller), &new_balance);
 
             // Emit event for minting
             self.env().emit_event(TokenMinted {
@@ -247,7 +250,7 @@ mod polkadot {
             
             // Get current balance
             let current_balance = self.swap_pairs
-                .get(&(caller, caller))
+                .get((caller, caller))
                 .unwrap_or(0);
             
             // Check if caller has enough balance
@@ -255,9 +258,12 @@ mod polkadot {
                 return Err(Error::InsufficientBalance)
             }
             
-            // Subtract burned amount
+            // Subtract burned amount using checked_sub
+            let new_balance = current_balance.checked_sub(amount)
+                .ok_or(Error::InsufficientBalance)?;
+            
             self.swap_pairs
-                .insert(&(caller, caller), &(current_balance - amount));
+                .insert((caller, caller), &new_balance);
 
             // Emit event for burning
             self.env().emit_event(TokenBurned {
