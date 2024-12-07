@@ -21,6 +21,7 @@
     "@glittr-sdk/sdk": "^0.17.0",
     "@gobob/bob-sdk": "^3.0.3",
     "@gobob/sats-wagmi": "^0.3.16",
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.1",
     "@martianwallet/aptos-wallet-adapter": "^0.0.5",
     "@nightlylabs/aptos-wallet-adapter-plugin": "^0.2.12",

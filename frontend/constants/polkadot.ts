@@ -1,3 +1,16 @@
+import { 
+  ArrowRightIcon, 
+  CheckIcon, 
+  PlusIcon, 
+  FireIcon, 
+  ArrowsRightLeftIcon, 
+  WalletIcon, 
+  LockOpenIcon, 
+  ChartBarIcon, 
+  CalculatorIcon, 
+  DocumentTextIcon, 
+  TagIcon 
+} from "@heroicons/react/24/outline";
 import { BlockType } from "@/constants/paths";
 
 export const blocks: BlockType[] = [
@@ -6,7 +19,7 @@ export const blocks: BlockType[] = [
     name: "Transfer DOT",
     description: "Transfer DOT tokens to another account",
     color: "#E6007A",
-    icon: "ArrowRightIcon",
+    icon: ArrowRightIcon,
     category: "defi",
     technology: "Transaction",
     inputs: [
@@ -31,7 +44,7 @@ export const blocks: BlockType[] = [
     name: "Approve Spending",
     description: "Approve another account to spend DOT tokens on your behalf",
     color: "#E6007A",
-    icon: "CheckIcon",
+    icon: CheckIcon,
     category: "defi",
     technology: "Transaction",
     inputs: [
@@ -56,7 +69,7 @@ export const blocks: BlockType[] = [
     name: "Mint DOT",
     description: "Mint new DOT tokens",
     color: "#E6007A",
-    icon: "PlusIcon",
+    icon: PlusIcon,
     category: "contract",
     technology: "Transaction",
     inputs: [
@@ -75,7 +88,7 @@ export const blocks: BlockType[] = [
     name: "Burn DOT",
     description: "Burn existing DOT tokens",
     color: "#E6007A",
-    icon: "FireIcon",
+    icon: FireIcon,
     category: "contract",
     technology: "Transaction",
     inputs: [
@@ -94,7 +107,7 @@ export const blocks: BlockType[] = [
     name: "Transfer From",
     description: "Transfer DOT tokens from one account to another using allowance",
     color: "#E6007A",
-    icon: "ArrowsRightLeftIcon",
+    icon: ArrowsRightLeftIcon,
     category: "defi",
     technology: "Transaction",
     inputs: [
@@ -125,7 +138,7 @@ export const blocks: BlockType[] = [
     name: "Get Balance",
     description: "Get the DOT token balance of an account",
     color: "#E6007A",
-    icon: "WalletIcon",
+    icon: WalletIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [
@@ -143,7 +156,7 @@ export const blocks: BlockType[] = [
     name: "Check Allowance",
     description: "Check how many DOT tokens a spender is allowed to spend on behalf of an owner",
     color: "#E6007A",
-    icon: "LockOpenIcon",
+    icon: LockOpenIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [
@@ -167,7 +180,7 @@ export const blocks: BlockType[] = [
     name: "Total Supply",
     description: "Get the total supply of DOT tokens",
     color: "#E6007A",
-    icon: "ChartBarIcon",
+    icon: ChartBarIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [],

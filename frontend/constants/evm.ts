@@ -1,4 +1,17 @@
 import { BlockType } from "@/constants/paths";
+import { 
+  ArrowRightIcon, 
+  CheckIcon, 
+  PlusIcon, 
+  FireIcon, 
+  ArrowsRightLeftIcon, 
+  WalletIcon, 
+  LockOpenIcon, 
+  ChartBarIcon, 
+  CalculatorIcon, 
+  DocumentTextIcon, 
+  TagIcon 
+} from "@heroicons/react/24/outline";
 
 export const blocks: BlockType[] = [
   {
@@ -6,7 +19,7 @@ export const blocks: BlockType[] = [
     name: "Transfer TKN",
     description: "Transfer TKN tokens to another account",
     color: "#627EEA",
-    icon: "ArrowRightIcon",
+    icon: ArrowRightIcon,
     category: "defi",
     technology: "Transaction",
     inputs: [
@@ -31,7 +44,7 @@ export const blocks: BlockType[] = [
     name: "Approve Spending",
     description: "Approve another account to spend TKN tokens on your behalf",
     color: "#627EEA",
-    icon: "CheckIcon",
+    icon: CheckIcon,
     category: "defi",
     technology: "Transaction",
     inputs: [
@@ -56,7 +69,7 @@ export const blocks: BlockType[] = [
     name: "Mint TKN",
     description: "Mint new TKN tokens",
     color: "#627EEA",
-    icon: "PlusIcon",
+    icon: PlusIcon,
     category: "contract",
     technology: "Transaction",
     inputs: [
@@ -81,7 +94,7 @@ export const blocks: BlockType[] = [
     name: "Burn TKN",
     description: "Burn existing TKN tokens",
     color: "#627EEA",
-    icon: "FireIcon",
+    icon: FireIcon,
     category: "contract",
     technology: "Transaction",
     inputs: [
@@ -100,7 +113,7 @@ export const blocks: BlockType[] = [
     name: "Transfer From",
     description: "Transfer TKN tokens from one account to another using allowance",
     color: "#627EEA",
-    icon: "ArrowsRightLeftIcon",
+    icon: ArrowsRightLeftIcon,
     category: "defi",
     technology: "Transaction",
     inputs: [
@@ -131,7 +144,7 @@ export const blocks: BlockType[] = [
     name: "Get Balance",
     description: "Get the TKN token balance of an account",
     color: "#627EEA",
-    icon: "WalletIcon",
+    icon: WalletIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [
@@ -149,7 +162,7 @@ export const blocks: BlockType[] = [
     name: "Check Allowance",
     description: "Check how many TKN tokens a spender is allowed to spend on behalf of an owner",
     color: "#627EEA",
-    icon: "LockOpenIcon",
+    icon: LockOpenIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [
@@ -173,7 +186,7 @@ export const blocks: BlockType[] = [
     name: "Total Supply",
     description: "Get the total supply of TKN tokens",
     color: "#627EEA",
-    icon: "ChartBarIcon",
+    icon: ChartBarIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [],
@@ -184,7 +197,7 @@ export const blocks: BlockType[] = [
     name: "Get Decimals",
     description: "Get the number of decimals for the token",
     color: "#627EEA",
-    icon: "CalculatorIcon",
+    icon: CalculatorIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [],
@@ -195,7 +208,7 @@ export const blocks: BlockType[] = [
     name: "Get Name",
     description: "Get the name of the token",
     color: "#627EEA",
-    icon: "DocumentTextIcon",
+    icon: DocumentTextIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [],
@@ -206,7 +219,7 @@ export const blocks: BlockType[] = [
     name: "Get Symbol",
     description: "Get the symbol of the token",
     color: "#627EEA",
-    icon: "TagIcon",
+    icon: TagIcon,
     category: "validation",
     technology: "Transaction",
     inputs: [],
