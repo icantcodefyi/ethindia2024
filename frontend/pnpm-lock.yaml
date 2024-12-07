@@ -59,6 +59,12 @@ importers:
       '@openblockhq/aptos-wallet-adapter':
         specifier: ^0.1.5
         version: 0.1.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/api':
+        specifier: ^15.0.1
+        version: 15.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/extension-dapp':
+        specifier: ^0.57.1
+        version: 0.57.1(@polkadot/api@15.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.2.3(@polkadot/util@13.2.3))(@polkadot/util@13.2.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@pontem/wallet-adapter-plugin':
         specifier: ^0.2.1
         version: 0.2.1
@@ -280,7 +286,7 @@ importers:
         version: 3.23.8
     devDependencies:
       '@types/node':
-        specifier: ^20
+        specifier: ^20.17.9
         version: 20.17.9
       '@types/react':
         specifier: ^18
@@ -2447,6 +2453,14 @@ packages:
   '@polkadot/api@15.0.1':
     resolution: {integrity: sha512-ZOqw99B70XrX0it0cWu1YSBrtGNhdFpk5zvUVL5+FD8iyO+Tuk1m32VR0PukDCdlwxFXuEw7vRdZX/G/BzoZhg==}
     engines: {node: '>=18'}
+
+  '@polkadot/extension-dapp@0.57.1':
+    resolution: {integrity: sha512-/SN5jdFFEvJx4Sf5BG3WkQgWFoMlRm84BPw1bwAEFNOwKYdGFf0xKIgPmHg61h+4/+PchoYUuXahp0ZHGYsbPQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@polkadot/api': '*'
+      '@polkadot/util': '*'
+      '@polkadot/util-crypto': '*'
 
   '@polkadot/extension-inject@0.57.1':
     resolution: {integrity: sha512-0NUwLW4OzkvH6U6yAcdvRrr2FZilK/vyBcLD4sZL51U58D5d1MUXAe7hzWzjh92GRr9HiGEY5pkblXlXRn7RxQ==}
@@ -12945,6 +12959,18 @@ snapshots:
       '@polkadot/util-crypto': 13.2.3(@polkadot/util@13.2.3)
       eventemitter3: 5.0.1
       rxjs: 7.8.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/extension-dapp@0.57.1(@polkadot/api@15.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.2.3(@polkadot/util@13.2.3))(@polkadot/util@13.2.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/api': 15.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/extension-inject': 0.57.1(@polkadot/api@15.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@13.2.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/util': 13.2.3
+      '@polkadot/util-crypto': 13.2.3(@polkadot/util@13.2.3)
       tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil

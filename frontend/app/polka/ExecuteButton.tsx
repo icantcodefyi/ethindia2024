@@ -4,6 +4,8 @@ import { Play, Loader2, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { web3FromAddress } from '@polkadot/extension-dapp';
 
 interface ExecuteButtonProps {
   blocks: BlockType[];
@@ -34,32 +36,40 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
     setIsExecuting(true);
 
     try {
-      //@ts-ignore
-      window.t = wallet.instance
+      // Get the API instance from the wallet
+      const api = wallet.instance;
+      
+      // Get the injector for the connected account
+      const injector = await web3FromAddress(wallet.address);
+
       for (const block of blocks) {
         onLog(`Executing ${block.name}...`, "info");
-        console.log("Executing block:", block);
-
+        
         const blockIndex = blocks.indexOf(block);
         const blockValues = values[`chain-${blockIndex}`] || {};
-
-        console.log("BLOCK VALUES:", blockValues, "Block Index: ", blockIndex)
 
         switch (block.id) {
           case "polkadot_transfer":
             try {
-              const signer = await wallet.instance.signer;
-              const payload = {
-                address: CONTRACT_ADDRESS,
-                method: 'transfer',
-                args: [
-                  blockValues["Recipient Address"],
-                  blockValues["Amount"]
-                ]
-              };
+              const tx = api.tx.contracts.call(
+                CONTRACT_ADDRESS,
+                0, // value
+                null, // gas limit (null means automatic)
+                null, // storage deposit limit (null means automatic)
+                {
+                  transfer: {
+                    to: blockValues["Recipient Address"],
+                    value: blockValues["Amount"]
+                  }
+                }
+              );
 
-              const signature = await signer.signRaw(payload);
-              onLog(`Transfer signed: ${signature.signature}`, "success");
+              const result = await tx.signAndSend(
+                wallet.address,
+                { signer: injector.signer }
+              );
+
+              onLog(`Transfer submitted with hash: ${result.hash.toHex()}`, "success");
             } catch (error) {
               onLog(`Transfer failed: ${error}`, "error");
             }
@@ -67,18 +77,25 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
 
           case "polkadot_approve":
             try {
-              const signer = await wallet.instance.signer;
-              const payload = {
-                address: CONTRACT_ADDRESS,
-                method: 'approve',
-                args: [
-                  blockValues["Spender Address"],
-                  blockValues["Amount"]
-                ]
-              };
+              const tx = api.tx.contracts.call(
+                CONTRACT_ADDRESS,
+                0,
+                null,
+                null, // Add storage deposit limit parameter
+                {
+                  approve: {
+                    spender: blockValues["Spender Address"],
+                    value: blockValues["Amount"]
+                  }
+                }
+              );
 
-              const signature = await signer.signRaw(payload);
-              onLog(`Approval signed: ${signature.signature}`, "success");
+              const result = await tx.signAndSend(
+                wallet.address,
+                { signer: injector.signer }
+              );
+
+              onLog(`Approval submitted with hash: ${result.hash.toHex()}`, "success");
             } catch (error) {
               onLog(`Approval failed: ${error}`, "error");
             }
@@ -86,19 +103,24 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
 
           case "polkadot_mint":
             try {
-              console.log("Minting", blockValues["Amount"]);
-              const signer = await wallet.instance.signer;
-              const payload = {
-                address: CONTRACT_ADDRESS,
-                method: 'mint',
-                args: [
-                  blockValues["Amount"]
-                ]
-              };
+              const tx = api.tx.contracts.call(
+                CONTRACT_ADDRESS,
+                0,
+                null,
+                null, // Add storage deposit limit parameter
+                {
+                  mint: {
+                    value: blockValues["Amount"]
+                  }
+                }
+              );
 
-              const signature = await signer.signRaw(payload);
-              console.log(`Mint signed: ${signature.signature}`, "success");
-              onLog(`Mint signed: ${signature.signature}`, "success");
+              const result = await tx.signAndSend(
+                wallet.address,
+                { signer: injector.signer }
+              );
+
+              onLog(`Mint submitted with hash: ${result.hash.toHex()}`, "success");
             } catch (error) {
               onLog(`Mint failed: ${error}`, "error");
             }
@@ -106,15 +128,24 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
 
           case "polkadot_burn":
             try {
-              const signer = await wallet.instance.signer;
-              const payload = {
-                address: CONTRACT_ADDRESS,
-                method: 'burn',
-                args: [blockValues.amount]
-              };
+              const tx = api.tx.contracts.call(
+                CONTRACT_ADDRESS,
+                0,
+                null,
+                null, // Add storage deposit limit parameter
+                {
+                  burn: {
+                    value: blockValues["Amount"]
+                  }
+                }
+              );
 
-              const signature = await signer.signRaw(payload);
-              onLog(`Burn signed: ${signature.signature}`, "success");
+              const result = await tx.signAndSend(
+                wallet.address,
+                { signer: injector.signer }
+              );
+
+              onLog(`Burn submitted with hash: ${result.hash.toHex()}`, "success");
             } catch (error) {
               onLog(`Burn failed: ${error}`, "error");
             }

@@ -138,59 +138,38 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
               if (!blockValues["Account Address"]) {
                 throw new Error("Missing required parameters for balanceOf");
               }
-              const { data: balance } = await useReadContract({
-                contract,
-                method: "function balanceOf(address _owner) view returns (uint256)",
-                params: [blockValues["Account Address"]],
-              });
-              onLog(`Balance: ${balance?.toString()} TKN`, "success");
+              const balance = await contract.read.balanceOf([blockValues["Account Address"]]);
+              onLog(`Balance: ${balance.toString()} TKN`, "success");
               break;
 
             case "evm_allowance":
               if (!blockValues["Owner Address"] || !blockValues["Spender Address"]) {
                 throw new Error("Missing required parameters for allowance");
               }
-              const { data: allowance } = await useReadContract({
-                contract,
-                method: "function allowance(address _owner, address _spender) view returns (uint256)",
-                params: [blockValues["Owner Address"], blockValues["Spender Address"]],
-              });
-              onLog(`Allowance: ${allowance?.toString()} TKN`, "success");
+              const allowance = await contract.read.allowance([
+                blockValues["Owner Address"],
+                blockValues["Spender Address"]
+              ]);
+              onLog(`Allowance: ${allowance.toString()} TKN`, "success");
               break;
 
             case "evm_total_supply":
-              const { data: totalSupply } = await useReadContract({
-                contract,
-                method: "function totalSupply() view returns (uint256)",
-                params: [],
-              });
-              onLog(`Total Supply: ${totalSupply?.toString()} TKN`, "success");
+              const totalSupply = await contract.read.totalSupply();
+              onLog(`Total Supply: ${totalSupply.toString()} TKN`, "success");
               break;
 
             case "evm_decimals":
-              const { data: decimals } = await useReadContract({
-                contract,
-                method: "function decimals() view returns (uint8)",
-                params: [],
-              });
-              onLog(`Decimals: ${decimals?.toString()}`, "success");
+              const decimals = await contract.read.decimals();
+              onLog(`Decimals: ${decimals.toString()}`, "success");
               break;
 
             case "evm_name":
-              const { data: name } = await useReadContract({
-                contract,
-                method: "function name() view returns (string)",
-                params: [],
-              });
+              const name = await contract.read.name();
               onLog(`Token Name: ${name}`, "success");
               break;
 
             case "evm_symbol":
-              const { data: symbol } = await useReadContract({
-                contract,
-                method: "function symbol() view returns (string)",
-                params: [],
-              });
+              const symbol = await contract.read.symbol();
               onLog(`Token Symbol: ${symbol}`, "success");
               break;
 

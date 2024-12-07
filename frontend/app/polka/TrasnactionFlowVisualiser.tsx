@@ -5,7 +5,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import ExecuteButton from "./ExecuteButton";
-import { getWallets } from '@talismn/connect-wallets';
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 
 interface Log {
   message: string;
@@ -23,37 +24,59 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
   values,
 }) => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [talismanWallet, setTalismanWallet] = useState<any>(null);
+  const [api, setApi] = useState<ApiPromise | null>(null);
   const [logs, setLogs] = useState<Log[]>([]);
 
   useEffect(() => {
     const initializeWallet = async () => {
-      const installedWallets = getWallets().filter((wallet) => wallet.installed);
-      const wallet = installedWallets.find(
-        (wallet) => wallet.extensionName === 'talisman',
-      );
+      try {
+        // Initialize the provider with the custom endpoint
+        const provider = new WsProvider('wss://rpc1.paseo.popnetwork.xyz');
+        
+        // Create the API instance
+        const api = await ApiPromise.create({ provider });
+        setApi(api);
 
-      if (wallet) {
-        try {
-          await wallet.enable('ContractCraft');
-          setTalismanWallet(wallet);
-          wallet.subscribeAccounts((accounts) => {
-            if (accounts && accounts.length > 0) {
-              setWalletAddress(accounts[0].address);
-              addLog(`Connected to wallet: ${accounts[0].address.slice(0, 8)}...`, "success");
-            } else {
-              setWalletAddress(null);
-              addLog("Wallet disconnected", "info");
-            }
-          });
-        } catch (err) {
-          console.error("Failed to connect to Talisman:", err);
-          addLog("Failed to connect to wallet", "error");
+        // Enable the extension
+        const extensions = await web3Enable('ContractCraft');
+        
+        if (extensions.length === 0) {
+          addLog("No Polkadot extension found. Please install it.", "error");
+          return;
         }
+
+        // Get all accounts from the extension
+        const accounts = await web3Accounts();
+        
+        if (accounts.length > 0) {
+          setWalletAddress(accounts[0].address);
+          addLog(`Connected to wallet: ${accounts[0].address.slice(0, 8)}...`, "success");
+        } else {
+          addLog("No accounts found in the Polkadot extension", "error");
+        }
+
+        // Get chain info
+        const [chain, nodeName, nodeVersion] = await Promise.all([
+          api.rpc.system.chain(),
+          api.rpc.system.name(),
+          api.rpc.system.version()
+        ]);
+
+        addLog(`Connected to ${chain} using ${nodeName} v${nodeVersion}`, "info");
+      } catch (err) {
+        console.error("Failed to connect:", err);
+        addLog("Failed to connect to Polkadot extension", "error");
       }
     };
 
     initializeWallet();
+
+    // Cleanup function
+    return () => {
+      if (api) {
+        api.disconnect();
+      }
+    };
   }, []);
 
   const addLog = (
@@ -251,7 +274,7 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
                 onLog={addLog}
                 wallet={{
                   address: walletAddress,
-                  instance: talismanWallet
+                  instance: api
                 }}
               />
             </CardHeader>
