@@ -1,42 +1,55 @@
 import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getWallets } from '@talismn/connect-wallets';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 
 const PolkaHeader = () => {
   const [walletAddress, setWalletAddress] = React.useState<string | null>(null);
-  const [talismanWallet, setTalismanWallet] = React.useState<any>(null);
+  const [api, setApi] = React.useState<ApiPromise | null>(null);
 
   const connectWallet = async () => {
-    const installedWallets = getWallets().filter((wallet) => wallet.installed);
-    const wallet = installedWallets.find(
-      (wallet) => wallet.extensionName === 'talisman',
-    );
-
-    if (!wallet) {
-      window.open('https://talisman.xyz/download', '_blank');
-      return;
-    }
-
     try {
-      await wallet.enable('ContractCraft');
-      setTalismanWallet(wallet);
-      wallet.subscribeAccounts((accounts: any[]) => {
-        if (accounts.length > 0) {
-          setWalletAddress(accounts[0].address);
-        } else {
-          setWalletAddress(null);
-        }
-      });
+      // Initialize the provider with the custom endpoint
+      const provider = new WsProvider('wss://rpc1.paseo.popnetwork.xyz');
+      
+      // Create the API instance
+      const api = await ApiPromise.create({ provider });
+      setApi(api);
+
+      // Enable the extension
+      const extensions = await web3Enable('ContractCraft');
+      
+      if (extensions.length === 0) {
+        window.open('https://polkadot.js.org/extension/', '_blank');
+        return;
+      }
+
+      // Get all accounts from the extension
+      const accounts = await web3Accounts();
+      
+      if (accounts.length > 0) {
+        setWalletAddress(accounts[0].address);
+      }
+
+      // Get chain info
+      const [chain, nodeName, nodeVersion] = await Promise.all([
+        api.rpc.system.chain(),
+        api.rpc.system.name(),
+        api.rpc.system.version()
+      ]);
+
+      console.log(`Connected to ${chain} using ${nodeName} v${nodeVersion}`);
     } catch (err) {
-      console.error("Failed to connect to Talisman:", err);
+      console.error("Failed to connect:", err);
     }
   };
 
   const disconnectWallet = async () => {
-    if (talismanWallet) {
+    if (api) {
+      await api.disconnect();
+      setApi(null);
       setWalletAddress(null);
-      setTalismanWallet(null);
     }
   };
 
@@ -96,7 +109,7 @@ const PolkaHeader = () => {
                   "transition-colors"
                 )}
               >
-                Connect Talisman
+                Connect Wallet
               </button>
             )}
           </div>
