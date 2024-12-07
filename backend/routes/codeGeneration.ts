@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { groq } from '@ai-sdk/groq';
+import { openai } from '@ai-sdk/openai';
 import { generateText, streamText, tool } from 'ai';
 import { z } from 'zod';
 import fs from 'fs/promises';
@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Load knowledge base
 async function loadKnowledgeBase(language: 'ink' | 'move') {
-  const filePath = path.join(process.cwd(), "..", `knowledge-base/${language}_contracts.json`)
+  const filePath = path.join(process.cwd(), `knowledge-base/${language}_contracts.json`)
   const data = await fs.readFile(filePath, 'utf-8')
   return JSON.parse(data)
 }
@@ -40,11 +40,11 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     // Initialize Groq model
-    const model = groq("mixtral-8x7b-32768");
+    const model = openai("gpt-4o-mini")
 
     if (stream) {
       const knowledgeBase = await loadKnowledgeBase(language);
-      
+
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
