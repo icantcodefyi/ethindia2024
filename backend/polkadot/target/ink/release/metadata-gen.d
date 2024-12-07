@@ -1,1 +1,0 @@
-/Users/aniruddhdubge/icantcodefyi/hackathons/ethindia2024/backend/polkadot/target/ink/release/metadata-gen: /Users/aniruddhdubge/icantcodefyi/hackathons/ethindia2024/backend/polkadot/lib.rs /private/var/folders/fd/hsznstxn1yxcgzn83ybbcydw0000gn/T/cargo-contract_YQTlX0/.ink/metadata_gen/main.rs
