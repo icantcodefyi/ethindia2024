@@ -16,7 +16,11 @@ import { OpenBlockWallet } from "@openblockhq/aptos-wallet-adapter";
 import { TokenPocketWallet } from "@tp-lab/aptos-wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
 import { WelldoneWallet } from "@welldone-studio/aptos-wallet-adapter";
-import { polygonAmoy } from "thirdweb/chains";
+import { createThirdwebClient } from "thirdweb";
+
+export const client = createThirdwebClient({
+  clientId: "07edaeb20640aa496191f50d884c2dda"
+});
 
 const queryClient = new QueryClient();
 
