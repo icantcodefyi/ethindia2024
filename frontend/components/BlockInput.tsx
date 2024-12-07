@@ -24,13 +24,13 @@ interface BlockInputProps {
 
 const BlockInput: React.FC<BlockInputProps> = ({ input, value, onChange }) => {
   const baseStyles = cn(
-    "w-full bg-white border-2 border-black rounded-lg",
-    "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-    "hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[-2px]",
-    "focus:shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-y-[-2px]",
+    "w-full bg-black/30 backdrop-blur-md border-2 border-primary/30 rounded-lg",
+    "shadow-[2px_2px_0_0_rgba(255,255,255,0.1)]",
+    "hover:shadow-[4px_4px_0_0_rgba(255,255,255,0.2)] hover:translate-y-[-2px] hover:border-primary/50",
+    "focus:shadow-[4px_4px_0_0_rgba(255,255,255,0.2)] focus:translate-y-[-2px] focus:border-primary/50",
     "transition-all duration-200",
-    "text-black font-medium placeholder:text-gray-500",
-    "focus-visible:ring-0 focus-visible:ring-offset-0"
+    "text-primary font-medium placeholder:text-primary/50",
+    "focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0"
   );
 
   switch (input.type) {
@@ -41,17 +41,17 @@ const BlockInput: React.FC<BlockInputProps> = ({ input, value, onChange }) => {
             className={cn(
               baseStyles,
               "h-9 px-3",
-              "data-[placeholder]:text-gray-500"
+              "data-[placeholder]:text-primary/50"
             )}
           >
             <SelectValue placeholder="Select..." />
           </SelectTrigger>
-          <SelectContent className="bg-white border-2 border-black rounded-lg shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+          <SelectContent className="bg-black/95 backdrop-blur-md border-2 border-primary/30 rounded-lg shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]">
             {input.options?.map((option) => (
               <SelectItem
                 key={option}
                 value={option}
-                className="hover:bg-gray-100 font-medium cursor-pointer focus:bg-gray-100"
+                className="hover:bg-primary/20 text-primary font-medium cursor-pointer focus:bg-primary/20"
               >
                 {option}
               </SelectItem>
@@ -71,7 +71,7 @@ const BlockInput: React.FC<BlockInputProps> = ({ input, value, onChange }) => {
             className={cn(baseStyles, "h-9 px-3", input.unit ? "pr-10" : "")}
           />
           {input.unit && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm font-medium">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/70 text-sm font-medium">
               {input.unit}
             </span>
           )}

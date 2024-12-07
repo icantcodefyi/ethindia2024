@@ -90,9 +90,9 @@ const ScrollableArea: React.FC<{
     <div ref={containerRef} className="relative">
       <ScrollButtons scrollRef={scrollRef} containerRef={containerRef} />
       <ScrollArea
-        className={cn("w-full whitespace-nowrap rounded-lg", className)}
+        className={cn("w-full whitespace-nowrap rounded-lg ", className)}
       >
-        <div ref={scrollRef} className="flex gap-6 px-12 min-h-[200px] items-center">
+        <div ref={scrollRef} className="flex gap-6 px-12 min-h-[300px] justify-center items-center">
           {children}
         </div>
         <ScrollBar orientation="horizontal" className="bg-gray-200" />
@@ -115,7 +115,7 @@ const AvailablePieces: React.FC<{
       </CardHeader>
       <CardContent>
         <Tabs defaultValue={technologies[0]} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 gap-4 bg-transparent">
+          <TabsList className="w-full grid grid-cols-4 gap-4 bg-transparent">
             {technologies.map((tech) => (
               <TabsTrigger
                 key={tech}
