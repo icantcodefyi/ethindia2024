@@ -8,13 +8,23 @@ mod polkadot {
     #[ink(storage)]
     #[derive(Default)]
     pub struct Polkadot {
-        /// Total token supply.
+        /// ERC-20 storage
+        name: String,
+        symbol: String,
+        decimals: u8,
         total_supply: Balance,
-        /// Mapping from owner to number of owned token.
         balances: Mapping<AccountId, Balance>,
-        /// Mapping of the token amount which an account is allowed to withdraw
-        /// from another account.
         allowances: Mapping<(AccountId, AccountId), Balance>,
+        
+        /// ERC-721 storage
+        nft_name: String, 
+        nft_symbol: String,
+        nft_tokens: Mapping<TokenId, AccountId>,
+        nft_owner_tokens: Mapping<AccountId, Vec<TokenId>>,
+        nft_token_approvals: Mapping<TokenId, AccountId>,
+        nft_operator_approvals: Mapping<(AccountId, AccountId), bool>,
+        nft_token_count: TokenId,
+        nft_token_uris: Mapping<TokenId, String>,
     }
 
     /// Event emitted when a token transfer occurs.
@@ -38,6 +48,29 @@ mod polkadot {
         value: Balance,
     }
 
+    /// Event emitted when an NFT transfer occurs.
+    #[ink(event)]
+    pub struct NFTTransfer {
+        #[ink(topic)]
+        from: Option<AccountId>,
+        #[ink(topic)]
+        to: Option<AccountId>,
+        #[ink(topic)]
+        token_id: TokenId,
+    }
+
+    /// Event emitted when an NFT approval occurs that `approved` is allowed to transfer
+    /// the NFT with token ID `token_id` from `owner`.
+    #[ink(event)]
+    pub struct NFTApproval {
+        #[ink(topic)]
+        owner: AccountId,
+        #[ink(topic)]
+        approved: AccountId,
+        #[ink(topic)]
+        token_id: TokenId,
+    }
+
     /// The ERC-20 error types.
     #[derive(Debug, PartialEq, Eq)]
     #[ink::scale_derive(Encode, Decode, TypeInfo)]
@@ -46,28 +79,123 @@ mod polkadot {
         InsufficientBalance,
         /// Returned if not enough allowance to fulfill a request is available.
         InsufficientAllowance,
+        
+        /// New NFT errors
+        TokenNotFound,
+        NotTokenOwner,
+        TokenAlreadyMinted,
+        InvalidTokenURI,
+        NotApprovedOrOwner,
+        OperatorNotApproved,
     }
 
     /// The ERC-20 result type.
     pub type Result<T> = core::result::Result<T, Error>;
 
+    /// The NFT token ID type.
+    pub type TokenId = u32;
+
     impl Polkadot {
-        /// Creates a new ERC-20 contract with the specified initial supply.
-        #[ink(constructor)]
-        pub fn new(total_supply: Balance) -> Self {
-            let mut balances = Mapping::default();
-            let caller = Self::env().caller();
-            balances.insert(caller, &total_supply);
-            Self::env().emit_event(Transfer {
+        /// Creates a new ERC-20 token with specified parameters
+        #[ink(message)]
+        pub fn create_erc20(
+            &mut self,
+            name: String,
+            symbol: String, 
+            decimals: u8,
+            initial_supply: Balance
+        ) -> Result<()> {
+            let caller = self.env().caller();
+            
+            self.name = name;
+            self.symbol = symbol;
+            self.decimals = decimals;
+            self.total_supply = initial_supply;
+            self.balances.insert(caller, &initial_supply);
+            
+            self.env().emit_event(Transfer {
                 from: None,
                 to: Some(caller),
-                value: total_supply,
+                value: initial_supply,
             });
-            Self {
-                total_supply,
-                balances,
-                allowances: Default::default(),
+            
+            Ok(())
+        }
+
+        /// Creates a new ERC-721 token collection
+        #[ink(message)]
+        pub fn create_erc721(&mut self, name: String, symbol: String) -> Result<()> {
+            self.nft_name = name;
+            self.nft_symbol = symbol;
+            self.nft_token_count = 0;
+            Ok(())
+        }
+
+        /// Returns the owner of the token
+        #[ink(message)]
+        pub fn owner_of(&self, token_id: TokenId) -> Result<AccountId> {
+            self.nft_tokens.get(token_id).ok_or(Error::TokenNotFound)
+        }
+
+        /// Approves an account to transfer a specific token
+        #[ink(message)]
+        pub fn approve_nft(&mut self, to: AccountId, token_id: TokenId) -> Result<()> {
+            let caller = self.env().caller();
+            let owner = self.nft_tokens.get(token_id).ok_or(Error::TokenNotFound)?;
+            
+            if owner != caller {
+                return Err(Error::NotTokenOwner)
             }
+
+            self.nft_token_approvals.insert(token_id, &to);
+            
+            self.env().emit_event(NFTApproval {
+                owner: caller,
+                approved: to,
+                token_id,
+            });
+            
+            Ok(())
+        }
+
+        /// Sets or unsets an operator for all tokens
+        #[ink(message)]
+        pub fn set_approval_for_all(&mut self, operator: AccountId, approved: bool) -> Result<()> {
+            let caller = self.env().caller();
+            self.nft_operator_approvals.insert((&caller, &operator), &approved);
+            Ok(())
+        }
+
+        /// Mints a new NFT token with metadata
+        #[ink(message)]
+        pub fn mint_nft(&mut self, to: AccountId, token_uri: String) -> Result<TokenId> {
+            if token_uri.is_empty() {
+                return Err(Error::InvalidTokenURI)
+            }
+
+            let token_id = self.nft_token_count;
+            self.nft_token_count += 1;
+            
+            self.nft_tokens.insert(token_id, &to);
+            self.nft_token_uris.insert(token_id, &token_uri);
+            
+            let mut tokens = self.nft_owner_tokens.get(&to).unwrap_or_default();
+            tokens.push(token_id);
+            self.nft_owner_tokens.insert(&to, &tokens);
+            
+            self.env().emit_event(NFTTransfer {
+                from: None,
+                to: Some(to),
+                token_id,
+            });
+            
+            Ok(token_id)
+        }
+
+        /// Gets token URI
+        #[ink(message)]
+        pub fn token_uri(&self, token_id: TokenId) -> Result<String> {
+            self.nft_token_uris.get(token_id).ok_or(Error::TokenNotFound)
         }
 
         /// Returns the total token supply.
