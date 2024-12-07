@@ -1,17 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
-
 #[ink::contract]
 mod polkadot {
     use ink::storage::Mapping;
-
     /// A simple ERC-20 contract.
     #[ink(storage)]
     #[derive(Default)]
     pub struct Polkadot {
-        /// ERC-20 storage
-        name: String,
-        symbol: String,
-        decimals: u8,
         /// Total token supply.
         total_supply: Balance,
         /// Mapping from owner to number of owned token.
@@ -19,18 +13,7 @@ mod polkadot {
         /// Mapping of the token amount which an account is allowed to withdraw
         /// from another account.
         allowances: Mapping<(AccountId, AccountId), Balance>,
-        
-        /// ERC-721 storage
-        nft_name: String, 
-        nft_symbol: String,
-        nft_tokens: Mapping<TokenId, AccountId>,
-        nft_owner_tokens: Mapping<AccountId, Vec<TokenId>>,
-        nft_token_approvals: Mapping<TokenId, AccountId>,
-        nft_operator_approvals: Mapping<(AccountId, AccountId), bool>,
-        nft_token_count: TokenId,
-        nft_token_uris: Mapping<TokenId, String>,
     }
-
     /// Event emitted when a token transfer occurs.
     #[ink(event)]
     pub struct Transfer {
@@ -40,7 +23,6 @@ mod polkadot {
         to: Option<AccountId>,
         value: Balance,
     }
-
     /// Event emitted when an approval occurs that `spender` is allowed to withdraw
     /// up to the amount of `value` tokens from `owner`.
     #[ink(event)]
@@ -51,28 +33,6 @@ mod polkadot {
         spender: AccountId,
         value: Balance,
     }
-
-    /// Event emitted when an NFT transfer occurs.
-    #[ink(event)]
-    pub struct NFTTransfer {
-        #[ink(topic)]
-        from: Option<AccountId>,
-        #[ink(topic)]
-        to: Option<AccountId>,
-        #[ink(topic)]
-        token_id: TokenId,
-    }
-    /// Event emitted when an NFT approval occurs that `approved` is allowed to transfer
-    /// the NFT with token ID `token_id` from `owner`.
-    #[ink(event)]
-    pub struct NFTApproval {
-        #[ink(topic)]
-        owner: AccountId,
-        #[ink(topic)]
-        approved: AccountId,
-        #[ink(topic)]
-        token_id: TokenId,
-    }
     /// The ERC-20 error types.
     #[derive(Debug, PartialEq, Eq)]
     #[ink::scale_derive(Encode, Decode, TypeInfo)]
@@ -81,40 +41,10 @@ mod polkadot {
         InsufficientBalance,
         /// Returned if not enough allowance to fulfill a request is available.
         InsufficientAllowance,
-        
-        /// New NFT errors
-        TokenNotFound,
-        NotTokenOwner,
-        TokenAlreadyMinted,
-        InvalidTokenURI,
-        NotApprovedOrOwner,
-        OperatorNotApproved,
     }
-
     /// The ERC-20 result type.
     pub type Result<T> = core::result::Result<T, Error>;
-
-    /// The NFT token ID type.
-    pub type TokenId = u32;
     impl Polkadot {
-        /// Creates a new ERC-20 token with specified parameters
-        #[ink(message)]
-        pub fn create_erc20(
-            &mut self,
-            name: String,
-            symbol: String, 
-            decimals: u8,
-            initial_supply: Balance
-        ) -> Result<()> {
-            let caller = self.env().caller();
-            
-            self.name = name;
-            self.symbol = symbol;
-            self.decimals = decimals;
-            self.total_supply = initial_supply;
-            self.balances.insert(caller, &initial_supply);
-            
-            self.env().emit_event(Transfer {
         /// Creates a new ERC-20 contract with the specified initial supply.
         #[ink(constructor)]
         pub fn new(total_supply: Balance) -> Self {
@@ -124,91 +54,19 @@ mod polkadot {
             Self::env().emit_event(Transfer {
                 from: None,
                 to: Some(caller),
-                value: initial_supply,
-            });
-            
-            Ok(())
-        }
-        /// Creates a new ERC-721 token collection
-        #[ink(message)]
-        pub fn create_erc721(&mut self, name: String, symbol: String) -> Result<()> {
-            self.nft_name = name;
-            self.nft_symbol = symbol;
-            self.nft_token_count = 0;
-            Ok(())
-        }
-        /// Returns the owner of the token
-        #[ink(message)]
-        pub fn owner_of(&self, token_id: TokenId) -> Result<AccountId> {
-            self.nft_tokens.get(token_id).ok_or(Error::TokenNotFound)
-        }
-        /// Approves an account to transfer a specific token
-        #[ink(message)]
-        pub fn approve_nft(&mut self, to: AccountId, token_id: TokenId) -> Result<()> {
-            let caller = self.env().caller();
-            let owner = self.nft_tokens.get(token_id).ok_or(Error::TokenNotFound)?;
-            
-            if owner != caller {
-                return Err(Error::NotTokenOwner)
-            }
-            self.nft_token_approvals.insert(token_id, &to);
-            
-            self.env().emit_event(NFTApproval {
-                owner: caller,
-                approved: to,
-                token_id,
                 value: total_supply,
             });
-            
-            Ok(())
-        }
-        /// Sets or unsets an operator for all tokens
-        #[ink(message)]
-        pub fn set_approval_for_all(&mut self, operator: AccountId, approved: bool) -> Result<()> {
-            let caller = self.env().caller();
-            self.nft_operator_approvals.insert((&caller, &operator), &approved);
-            Ok(())
-        }
-        /// Mints a new NFT token with metadata
-        #[ink(message)]
-        pub fn mint_nft(&mut self, to: AccountId, token_uri: String) -> Result<TokenId> {
-            if token_uri.is_empty() {
-                return Err(Error::InvalidTokenURI)
             Self {
                 total_supply,
                 balances,
                 allowances: Default::default(),
             }
-            let token_id = self.nft_token_count;
-            self.nft_token_count += 1;
-            
-            self.nft_tokens.insert(token_id, &to);
-            self.nft_token_uris.insert(token_id, &token_uri);
-            
-            let mut tokens = self.nft_owner_tokens.get(&to).unwrap_or_default();
-            tokens.push(token_id);
-            self.nft_owner_tokens.insert(&to, &tokens);
-            
-            self.env().emit_event(NFTTransfer {
-                from: None,
-                to: Some(to),
-                token_id,
-            });
-            
-            Ok(token_id)
         }
-        /// Gets token URI
-        #[ink(message)]
-        pub fn token_uri(&self, token_id: TokenId) -> Result<String> {
-            self.nft_token_uris.get(token_id).ok_or(Error::TokenNotFound)
-        }
-
         /// Returns the total token supply.
         #[ink(message)]
         pub fn total_supply(&self) -> Balance {
             self.total_supply
         }
-
         /// Returns the account balance for the specified `owner`.
         ///
         /// Returns `0` if the account is non-existent.
@@ -216,7 +74,6 @@ mod polkadot {
         pub fn balance_of(&self, owner: AccountId) -> Balance {
             self.balance_of_impl(&owner)
         }
-
         /// Returns the account balance for the specified `owner`.
         ///
         /// Returns `0` if the account is non-existent.
@@ -229,7 +86,6 @@ mod polkadot {
         fn balance_of_impl(&self, owner: &AccountId) -> Balance {
             self.balances.get(owner).unwrap_or_default()
         }
-
         /// Returns the amount which `spender` is still allowed to withdraw from `owner`.
         ///
         /// Returns `0` if no allowance has been set.
@@ -237,7 +93,6 @@ mod polkadot {
         pub fn allowance(&self, owner: AccountId, spender: AccountId) -> Balance {
             self.allowance_impl(&owner, &spender)
         }
-
         /// Returns the amount which `spender` is still allowed to withdraw from `owner`.
         ///
         /// Returns `0` if no allowance has been set.
@@ -250,7 +105,6 @@ mod polkadot {
         fn allowance_impl(&self, owner: &AccountId, spender: &AccountId) -> Balance {
             self.allowances.get((owner, spender)).unwrap_or_default()
         }
-
         /// Transfers `value` amount of tokens from the caller's account to account `to`.
         ///
         /// On success a `Transfer` event is emitted.
@@ -264,7 +118,6 @@ mod polkadot {
             let from = self.env().caller();
             self.transfer_from_to(&from, &to, value)
         }
-
         /// Allows `spender` to withdraw from the caller's account multiple times, up to
         /// the `value` amount.
         ///
@@ -283,7 +136,6 @@ mod polkadot {
             });
             Ok(())
         }
-
         /// Transfers `value` tokens on the behalf of `from` to the account `to`.
         ///
         /// This can be used to allow a contract to transfer tokens on ones behalf and/or
@@ -317,7 +169,6 @@ mod polkadot {
                 .insert((&from, &caller), &(allowance - value));
             Ok(())
         }
-
         /// Transfers `value` amount of tokens from the caller's account to account `to`.
         ///
         /// On success a `Transfer` event is emitted.
@@ -350,16 +201,13 @@ mod polkadot {
             Ok(())
         }
     }
-
     #[cfg(test)]
     mod tests {
         use super::*;
-
         use ink::primitives::{
             Clear,
             Hash,
         };
-
         fn assert_transfer_event(
             event: &ink::env::test::EmittedEvent,
             expected_from: Option<AccountId>,
@@ -373,7 +221,6 @@ mod polkadot {
             assert_eq!(from, expected_from, "encountered invalid Transfer.from");
             assert_eq!(to, expected_to, "encountered invalid Transfer.to");
             assert_eq!(value, expected_value, "encountered invalid Trasfer.value");
-
             let mut expected_topics = Vec::new();
             expected_topics.push(
                 ink::blake2x256!("Transfer(Option<AccountId>,Option<AccountId>,Balance)")
@@ -390,7 +237,6 @@ mod polkadot {
                 expected_topics.push(Hash::CLEAR_HASH);
             }
             expected_topics.push(encoded_into_hash(value));
-
             let topics = event.topics.clone();
             for (n, (actual_topic, expected_topic)) in
                 topics.iter().zip(expected_topics).enumerate()
@@ -398,24 +244,20 @@ mod polkadot {
                 let mut topic_hash = Hash::CLEAR_HASH;
                 let len = actual_topic.len();
                 topic_hash.as_mut()[0..len].copy_from_slice(&actual_topic[0..len]);
-
                 assert_eq!(
                     topic_hash, expected_topic,
                     "encountered invalid topic at {n}"
                 );
             }
         }
-
         /// The default constructor does its job.
         #[ink::test]
         fn new_works() {
             // Constructor works.
             let _polkadot = Polkadot::new(100);
-
             // Transfer event triggered during initial construction.
             let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
             assert_eq!(1, emitted_events.len());
-
             assert_transfer_event(
                 &emitted_events[0],
                 None,
@@ -423,7 +265,6 @@ mod polkadot {
                 100,
             );
         }
-
         /// The total supply was applied.
         #[ink::test]
         fn total_supply_works() {
@@ -440,7 +281,6 @@ mod polkadot {
             // Get the token total supply.
             assert_eq!(polkadot.total_supply(), 100);
         }
-
         /// Get the actual balance of an account.
         #[ink::test]
         fn balance_of_works() {
@@ -461,7 +301,6 @@ mod polkadot {
             // Bob does not owns tokens
             assert_eq!(polkadot.balance_of(accounts.bob), 0);
         }
-
         #[ink::test]
         fn transfer_works() {
             // Constructor works.
@@ -469,13 +308,11 @@ mod polkadot {
             // Transfer event triggered during initial construction.
             let accounts =
                 ink::env::test::default_accounts::<ink::env::DefaultEnvironment>();
-
             assert_eq!(polkadot.balance_of(accounts.bob), 0);
             // Alice transfers 10 tokens to Bob.
             assert_eq!(polkadot.transfer(accounts.bob, 10), Ok(()));
             // Bob owns 10 tokens.
             assert_eq!(polkadot.balance_of(accounts.bob), 10);
-
             let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
             assert_eq!(emitted_events.len(), 2);
             // Check first transfer event related to ERC-20 instantiation.
@@ -493,21 +330,17 @@ mod polkadot {
                 10,
             );
         }
-
         #[ink::test]
         fn invalid_transfer_should_fail() {
             // Constructor works.
             let mut polkadot = Polkadot::new(100);
             let accounts =
                 ink::env::test::default_accounts::<ink::env::DefaultEnvironment>();
-
             assert_eq!(polkadot.balance_of(accounts.bob), 0);
-
             // Set the contract as callee and Bob as caller.
             let contract = ink::env::account_id::<ink::env::DefaultEnvironment>();
             ink::env::test::set_callee::<ink::env::DefaultEnvironment>(contract);
             ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
-
             // Bob fails to transfers 10 tokens to Eve.
             assert_eq!(
                 polkadot.transfer(accounts.eve, 10),
@@ -517,7 +350,6 @@ mod polkadot {
             assert_eq!(polkadot.balance_of(accounts.alice), 100);
             assert_eq!(polkadot.balance_of(accounts.bob), 0);
             assert_eq!(polkadot.balance_of(accounts.eve), 0);
-
             // Transfer event triggered during initial construction.
             let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
             assert_eq!(emitted_events.len(), 1);
@@ -528,7 +360,6 @@ mod polkadot {
                 100,
             );
         }
-
         #[ink::test]
         fn transfer_from_works() {
             // Constructor works.
@@ -536,7 +367,6 @@ mod polkadot {
             // Transfer event triggered during initial construction.
             let accounts =
                 ink::env::test::default_accounts::<ink::env::DefaultEnvironment>();
-
             // Bob fails to transfer tokens owned by Alice.
             assert_eq!(
                 polkadot.transfer_from(accounts.alice, accounts.eve, 10),
@@ -544,15 +374,12 @@ mod polkadot {
             );
             // Alice approves Bob for token transfers on her behalf.
             assert_eq!(polkadot.approve(accounts.bob, 10), Ok(()));
-
             // The approve event takes place.
             assert_eq!(ink::env::test::recorded_events().count(), 2);
-
             // Set the contract as callee and Bob as caller.
             let contract = ink::env::account_id::<ink::env::DefaultEnvironment>();
             ink::env::test::set_callee::<ink::env::DefaultEnvironment>(contract);
             ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
-
             // Bob transfers tokens from Alice to Eve.
             assert_eq!(
                 polkadot.transfer_from(accounts.alice, accounts.eve, 10),
@@ -560,7 +387,6 @@ mod polkadot {
             );
             // Eve owns tokens.
             assert_eq!(polkadot.balance_of(accounts.eve), 10);
-
             // Check all transfer events that happened during the previous calls:
             let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
             assert_eq!(emitted_events.len(), 3);
@@ -579,23 +405,19 @@ mod polkadot {
                 10,
             );
         }
-
         #[ink::test]
         fn allowance_must_not_change_on_failed_transfer() {
             let mut polkadot = Polkadot::new(100);
             let accounts =
                 ink::env::test::default_accounts::<ink::env::DefaultEnvironment>();
-
             // Alice approves Bob for token transfers on her behalf.
             let alice_balance = polkadot.balance_of(accounts.alice);
             let initial_allowance = alice_balance + 2;
             assert_eq!(polkadot.approve(accounts.bob, initial_allowance), Ok(()));
-
             // Get contract address.
             let callee = ink::env::account_id::<ink::env::DefaultEnvironment>();
             ink::env::test::set_callee::<ink::env::DefaultEnvironment>(callee);
             ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
-
             // Bob tries to transfer tokens from Alice to Eve.
             let emitted_events_before = ink::env::test::recorded_events().count();
             assert_eq!(
@@ -613,7 +435,6 @@ mod polkadot {
                 ink::env::test::recorded_events().count()
             )
         }
-
         fn encoded_into_hash<T>(entity: T) -> Hash
         where
             T: ink::scale::Encode,
@@ -626,7 +447,6 @@ mod polkadot {
                 },
                 primitives::Clear,
             };
-
             let mut result = Hash::CLEAR_HASH;
             let len_result = result.as_ref().len();
             let encoded = entity.encode();
@@ -643,14 +463,11 @@ mod polkadot {
             result
         }
     }
-
     #[cfg(all(test, feature = "e2e-tests"))]
     mod e2e_tests {
         use super::*;
         use ink_e2e::ContractsBackend;
-
         type E2EResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-
         #[ink_e2e::test]
         async fn e2e_transfer<Client: E2EBackend>(mut client: Client) -> E2EResult<()> {
             // given
@@ -662,14 +479,12 @@ mod polkadot {
                 .await
                 .expect("instantiate failed");
             let mut call_builder = polkadot.call_builder::<Polkadot>();
-
             // when
             let total_supply_msg = call_builder.total_supply();
             let total_supply_res = client
                 .call(&ink_e2e::bob(), &total_supply_msg)
                 .dry_run()
                 .await?;
-
             let bob_account = ink_e2e::account_id(ink_e2e::AccountKeyring::Bob);
             let transfer_to_bob = 500_000_000u128;
             let transfer = call_builder.transfer(bob_account, transfer_to_bob);
@@ -678,13 +493,11 @@ mod polkadot {
                 .submit()
                 .await
                 .expect("transfer failed");
-
             let balance_of = call_builder.balance_of(bob_account);
             let balance_of_res = client
                 .call(&ink_e2e::alice(), &balance_of)
                 .dry_run()
                 .await?;
-
             // then
             assert_eq!(
                 total_supply,
@@ -692,10 +505,8 @@ mod polkadot {
                 "total_supply"
             );
             assert_eq!(transfer_to_bob, balance_of_res.return_value(), "balance_of");
-
             Ok(())
         }
-
         #[ink_e2e::test]
         async fn e2e_allowances<Client: E2EBackend>(mut client: Client) -> E2EResult<()> {
             // given
@@ -707,12 +518,9 @@ mod polkadot {
                 .await
                 .expect("instantiate failed");
             let mut call_builder = polkadot.call_builder::<Polkadot>();
-
             // when
-
             let bob_account = ink_e2e::account_id(ink_e2e::AccountKeyring::Bob);
             let charlie_account = ink_e2e::account_id(ink_e2e::AccountKeyring::Charlie);
-
             let amount = 500_000_000u128;
             // tx
             let transfer_from =
@@ -721,12 +529,10 @@ mod polkadot {
                 .call(&ink_e2e::charlie(), &transfer_from)
                 .submit()
                 .await;
-
             assert!(
                 transfer_from_result.is_err(),
                 "unapproved transfer_from should fail"
             );
-
             // Bob approves Charlie to transfer up to amount on his behalf
             let approved_value = 1_000u128;
             let approve_call = call_builder.approve(charlie_account, approved_value);
@@ -735,7 +541,6 @@ mod polkadot {
                 .submit()
                 .await
                 .expect("approve failed");
-
             // `transfer_from` the approved amount
             let transfer_from =
                 call_builder.transfer_from(bob_account, charlie_account, approved_value);
@@ -747,13 +552,11 @@ mod polkadot {
                 transfer_from_result.is_ok(),
                 "approved transfer_from should succeed"
             );
-
             let balance_of = call_builder.balance_of(bob_account);
             let balance_of_res = client
                 .call(&ink_e2e::alice(), &balance_of)
                 .dry_run()
                 .await?;
-
             // `transfer_from` again, this time exceeding the approved amount
             let transfer_from =
                 call_builder.transfer_from(bob_account, charlie_account, 1);
@@ -765,13 +568,11 @@ mod polkadot {
                 transfer_from_result.is_err(),
                 "transfer_from exceeding the approved amount should fail"
             );
-
             assert_eq!(
                 total_supply - approved_value,
                 balance_of_res.return_value(),
                 "balance_of"
             );
-
             Ok(())
         }
     }
