@@ -131,6 +131,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@18.3.2)(@types/react@18.3.14)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
+      '@react-oauth/google':
+        specifier: ^0.12.1
+        version: 0.12.1(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
       '@rise-wallet/wallet-adapter':
         specifier: ^0.1.2
         version: 0.1.2
@@ -203,6 +206,9 @@ importers:
       next-themes:
         specifier: ^0.4.4
         version: 0.4.4(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
+      okto-sdk-react:
+        specifier: ^0.1.6
+        version: 0.1.6(axios@1.7.9)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
       petra-plugin-wallet-adapter:
         specifier: ^0.4.5
         version: 0.4.5(@aptos-labs/ts-sdk@1.33.1)(aptos@1.21.0)
@@ -3240,6 +3246,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@react-oauth/google@0.12.1':
+    resolution: {integrity: sha512-qagsy22t+7UdkYAiT5ZhfM4StXi9PPNvw0zuwNmabrWyMKddczMtBIOARflbaIj+wHiQjnMAsZmzsUYuXeyoSg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   '@rise-wallet/wallet-adapter@0.1.2':
     resolution: {integrity: sha512-x32ocKBKQ6uBDhnRcChYzcSrjLxHfjLGuHn/A2vgks+qKl5sGAqMymmYNEtlV4y5z5mBdYMSDVBHnCHBmUolBQ==}
@@ -6545,6 +6557,13 @@ packages:
 
   ohash@1.1.4:
     resolution: {integrity: sha512-FlDryZAahJmEF3VR3w1KogSEdWX3WhA5GPakFx4J81kEAiHyLMpdLLElS8n8dfNadMgAne/MywcvmogzscVt4g==}
+
+  okto-sdk-react@0.1.6:
+    resolution: {integrity: sha512-ruRjm3tJYwPK9T5udJv3S1ysAeZZZnxNbjIjKSkpc3Hy7BsOqJCd2apdt9G+AsM1nTunGZSIDCQ8BoPnr5tmlQ==}
+    peerDependencies:
+      axios: '*'
+      react: '*'
+      react-dom: '*'
 
   on-exit-leak-free@0.2.0:
     resolution: {integrity: sha512-dqaz3u44QbRXQooZLTUKU41ZrzYrcvLISVgbrzbyCMxpmSLJvZ3ZamIJIZ29P6OhZIkNIQKosdeM6t1LYbA9hg==}
@@ -12368,6 +12387,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.14
 
+  '@react-oauth/google@0.12.1(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)':
+    dependencies:
+      react: 19.0.0-rc-66855b96-20241106
+      react-dom: 19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106)
+
   '@rise-wallet/wallet-adapter@0.1.2':
     dependencies:
       '@aptos-labs/wallet-adapter-core': 0.1.7
@@ -16901,6 +16925,12 @@ snapshots:
       ufo: 1.5.4
 
   ohash@1.1.4: {}
+
+  okto-sdk-react@0.1.6(axios@1.7.9)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106):
+    dependencies:
+      axios: 1.7.9
+      react: 19.0.0-rc-66855b96-20241106
+      react-dom: 19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106)
 
   on-exit-leak-free@0.2.0: {}
 
