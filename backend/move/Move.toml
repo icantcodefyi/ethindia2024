@@ -1,0 +1,15 @@
+[package]
+name = "contract_gen"
+version = "1.0.0"
+authors = []
+
+[addresses]
+contract_gen = "_"
+
+[dev-addresses]
+contract_gen = "0x111"
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", rev = "mainnet", subdir = "aptos-move/framework/aptos-framework"}
+
+[dev-dependencies]
