@@ -224,6 +224,9 @@ importers:
       okto-sdk-react:
         specifier: ^0.1.6
         version: 0.1.6(axios@1.7.9)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
+      openai:
+        specifier: ^4.76.0
+        version: 4.76.0(zod@3.23.8)
       petra-plugin-wallet-adapter:
         specifier: ^0.4.5
         version: 0.4.5(@aptos-labs/ts-sdk@1.33.1)(aptos@1.21.0)
