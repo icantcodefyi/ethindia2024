@@ -1,10 +1,13 @@
-import { Tag, Coins, Lock, Check } from "lucide-react";
 import {
   ArrowRightLeft,
   BrainCircuit,
   CircuitBoard,
   FileCode,
   Send,
+  Tag,
+  Coins,
+  Lock,
+  Check,
 } from "lucide-react";
 
 export interface BlockType {

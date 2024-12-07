@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import ExecuteButton from "./ExecuteButton";
-import { getWallets } from '@talismn/connect-wallets';
+import { getWallets } from "@talismn/connect-wallets";
 
 interface Log {
   message: string;
@@ -28,19 +28,24 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
 
   useEffect(() => {
     const initializeWallet = async () => {
-      const installedWallets = getWallets().filter((wallet) => wallet.installed);
+      const installedWallets = getWallets().filter(
+        (wallet) => wallet.installed
+      );
       const wallet = installedWallets.find(
-        (wallet) => wallet.extensionName === 'talisman',
+        (wallet) => wallet.extensionName === "talisman"
       );
 
       if (wallet) {
         try {
-          await wallet.enable('ContractCraft');
+          await wallet.enable("ContractCraft");
           setTalismanWallet(wallet);
           wallet.subscribeAccounts((accounts) => {
             if (accounts && accounts.length > 0) {
               setWalletAddress(accounts[0].address);
-              addLog(`Connected to wallet: ${accounts[0].address.slice(0, 8)}...`, "success");
+              addLog(
+                `Connected to wallet: ${accounts[0].address.slice(0, 8)}...`,
+                "success"
+              );
             } else {
               setWalletAddress(null);
               addLog("Wallet disconnected", "info");
@@ -67,11 +72,11 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
     if (!blockValue) return null;
 
     return (
-      <div className="mt-2 text-sm space-y-1">
+      <div className="mt-1 text-xs space-y-0.5">
         {Object.entries(blockValue).map(([key, value]) => (
-          <div key={key} className="flex items-center gap-2">
-            <span className="opacity-75">{key}:</span>
-            <span className="font-mono">{value}</span>
+          <div key={key} className="flex items-center gap-1">
+            <span className="text-gray-400">{key}:</span>
+            <span className="font-mono text-gray-300">{value}</span>
           </div>
         ))}
       </div>
@@ -88,21 +93,24 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
 
     if (lastBlock.category === "defi") {
       return {
-        message: "This transaction may affect your DOT balance. Please review carefully.",
+        message:
+          "This transaction may affect your DOT balance. Please review carefully.",
         type: "warning",
       };
     }
 
     if (lastBlock.category === "contract") {
       return {
-        message: "This operation interacts with a Polkadot smart contract. Please verify the details.",
+        message:
+          "This operation interacts with a Polkadot smart contract. Please verify the details.",
         type: "warning",
       };
     }
 
     if (lastBlock.category === "validation") {
       return {
-        message: "This is a read-only operation that won't modify the blockchain state.",
+        message:
+          "This is a read-only operation that won't modify the blockchain state.",
         type: "success",
       };
     }
@@ -117,23 +125,28 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
     if (!blocks[0]) return null;
 
     return (
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Transaction Preview</CardTitle>
+      <Card className="mb-3">
+        <CardHeader className="py-2">
+          <CardTitle className="text-sm">Transaction Preview</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">From:</span>
-              <span className="font-mono text-sm">{walletAddress || 'Not connected'}</span>
+        <CardContent className="py-2">
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium">From:</span>
+              <span className="font-mono">
+                {walletAddress?.slice(0, 12) || "Not connected"}...
+              </span>
             </div>
             {Object.entries(values).map(([key, value]) => (
-              <div key={key} className="flex items-center justify-between">
-                <span className="text-sm font-medium">{key}:</span>
-                <span className="font-mono text-sm">
+              <div
+                key={key}
+                className="flex items-center justify-between text-xs"
+              >
+                <span className="font-medium">{key}:</span>
+                <span className="font-mono">
                   {Object.entries(value).map(([k, v]) => (
                     <div key={k}>
-                      {k}: {v} {k.toLowerCase().includes('amount') ? 'DOT' : ''}
+                      {k}: {v} {k.toLowerCase().includes("amount") ? "DOT" : ""}
                     </div>
                   ))}
                 </span>
@@ -146,66 +159,57 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {blocks.length > 0 && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Card
               className={cn(
-                "border-2 border-black rounded-xl",
-                "shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-                "hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]",
-                "hover:translate-y-[-2px]",
-                "transition-all duration-300"
+                "border-[0.5px] border-gray-800 rounded-lg",
+                "bg-gray-900/50",
+                "shadow-sm",
+                "transition-all duration-200"
               )}
             >
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Steps</CardTitle>
+              <CardHeader className="py-2">
+                <CardTitle className="text-sm text-gray-300">Steps</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{blocks.length}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+              <CardContent className="py-2">
+                <div className="text-lg font-bold text-gray-100">
+                  {blocks.length}
+                </div>
+                <p className="text-xs text-gray-400">
                   Total operations in flow
                 </p>
               </CardContent>
             </Card>
 
-            {/* Transaction Logs Card */}
             <Card
               className={cn(
-                "border-2 border-black rounded-xl col-span-2",
-                "shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-                "hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]",
-                "hover:translate-y-[-2px]",
-                "transition-all duration-300"
+                "border-[0.5px] border-gray-800 rounded-lg col-span-2",
+                "bg-gray-900/50",
+                "shadow-sm",
+                "transition-all duration-200"
               )}
             >
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className="flex flex-row items-center justify-between py-2">
+                <CardTitle className="text-sm text-gray-300">
                   Transaction Logs
                 </CardTitle>
                 {logs.length > 0 && (
                   <button
                     onClick={() => setLogs([])}
-                    className={cn(
-                      "px-2 py-1 text-xs",
-                      "bg-white border-2 border-black rounded-lg",
-                      "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-                      "hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-                      "hover:translate-y-[-2px]",
-                      "transition-all duration-200",
-                      "flex items-center gap-1"
-                    )}
+                    className="px-2 py-1 text-xs border-[0.5px] rounded-md bg-background flex items-center gap-1"
                   >
-                    <RotateCcw size={12} />
+                    <RotateCcw size={8} />
                     Clear
                   </button>
                 )}
               </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-24 w-full rounded-lg border-2 border-black p-2">
+              <CardContent className="py-2">
+                <ScrollArea className="h-20 w-full rounded-md border-[0.5px] border-gray-800 p-2">
                   {logs.length === 0 ? (
-                    <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                    <div className="flex items-center justify-center h-full text-gray-500 text-xs">
                       No transaction logs yet
                     </div>
                   ) : (
@@ -214,11 +218,10 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
                         <div
                           key={index}
                           className={cn(
-                            "font-mono text-xs p-2 rounded border-2 border-black",
-                            "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-                            log.type === "error" && "bg-red-50",
-                            log.type === "success" && "bg-green-50",
-                            log.type === "info" && "bg-blue-50"
+                            "font-mono text-xs p-1.5 rounded border-[0.5px] border-gray-800",
+                            log.type === "error" && "bg-red-500 text-red-200",
+                            log.type === "success" && "bg-green-500 text-green-200",
+                            log.type === "info" && "bg-blue-500 text-blue-200"
                           )}
                         >
                           <span className="text-gray-500">
@@ -233,44 +236,50 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
               </CardContent>
             </Card>
           </div>
-          {blocks[0]?.technology === "Transaction" && renderTransactionPreview()}
+
+          {blocks[0]?.technology === "Transaction" &&
+            renderTransactionPreview()}
+
           <Card
             className={cn(
-              "border-2 border-black rounded-xl",
-              "shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-              "hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]",
-              "hover:translate-y-[-2px]",
-              "transition-all duration-300"
+              "border-[0.5px] border-gray-800 rounded-lg",
+              "bg-gray-900/50",
+              "shadow-sm",
+              "transition-all duration-200"
             )}
           >
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Transaction Flow</CardTitle>
-              <ExecuteButton
-                blocks={blocks}
-                values={values}
-                onLog={addLog}
-              />
+            <CardHeader className="flex flex-row items-center justify-between py-2">
+              <CardTitle className="text-sm text-gray-300">
+                Transaction Flow
+              </CardTitle>
+              <ExecuteButton blocks={blocks} values={values} onLog={addLog} />
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4">
+            <CardContent className="py-2">
+              <div className="flex flex-col gap-2">
                 {blocks.map((block, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <div
                       className={cn(
-                        "p-4 rounded-lg bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-1",
-                        block.category === "defi" && "border-pink-500",
-                        block.category === "contract" && "border-purple-500",
-                        block.category === "validation" && "border-green-500"
+                        "p-2 rounded-md bg-gray-900/80 border-[0.5px] border-gray-800 flex-1",
+                        "hover:bg-gray-800/50 transition-colors duration-200",
+                        block.category === "defi" &&
+                          "border-l-2 border-l-pink-500",
+                        block.category === "contract" &&
+                          "border-l-2 border-l-purple-500",
+                        block.category === "validation" &&
+                          "border-l-2 border-l-green-500"
                       )}
                     >
-                      <div className="flex items-center gap-2">
-                        <block.icon size={16} className="text-black" />
-                        <span className="font-medium">{block.name}</span>
+                      <div className="flex items-center gap-1">
+                        <block.icon size={10} className="text-gray-400 h-4 w-4" />
+                        <span className="font-medium text-xs text-gray-300">
+                          {block.name}
+                        </span>
                       </div>
                       {renderBlockValues(index)}
                     </div>
                     {index < blocks.length - 1 && (
-                      <ArrowRightLeft className="text-black" />
+                      <ArrowRightLeft size={10} className="text-gray-600" />
                     )}
                   </div>
                 ))}
@@ -280,15 +289,20 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
 
           <Alert
             className={cn(
-              "border-2 border-black rounded-xl",
-              "shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-              getFlowStatus(blocks).type === "warning" && "border-yellow-500 bg-yellow-50",
-              getFlowStatus(blocks).type === "success" && "border-green-500 bg-green-50",
-              getFlowStatus(blocks).type === "error" && "border-red-500 bg-red-50"
+              "border-[0.5px] rounded-lg",
+              "bg-gray-900/50",
+              getFlowStatus(blocks).type === "warning" &&
+                "border-l-2 border-l-yellow-500 bg-yellow-950/30",
+              getFlowStatus(blocks).type === "success" &&
+                "border-l-2 border-l-green-500 bg-green-950/30",
+              getFlowStatus(blocks).type === "error" &&
+                "border-l-2 border-l-red-500 bg-red-950/30"
             )}
           >
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{getFlowStatus(blocks).message}</AlertDescription>
+            <AlertCircle className="h-3 w-3 text-gray-400" />
+            <AlertDescription className="text-xs text-gray-300">
+              {getFlowStatus(blocks).message}
+            </AlertDescription>
           </Alert>
         </>
       )}

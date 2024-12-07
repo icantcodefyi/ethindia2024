@@ -92,7 +92,10 @@ const ScrollableArea: React.FC<{
       <ScrollArea
         className={cn("w-full whitespace-nowrap rounded-lg ", className)}
       >
-        <div ref={scrollRef} className="flex gap-6 px-12 min-h-[300px] justify-center items-center">
+        <div
+          ref={scrollRef}
+          className="flex gap-6 px-12 min-h-[300px] justify-center items-center"
+        >
           {children}
         </div>
         <ScrollBar orientation="horizontal" className="bg-gray-200" />

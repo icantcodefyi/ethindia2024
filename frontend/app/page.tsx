@@ -80,7 +80,7 @@ const LandingPage = () => {
                         Move Protocol
                       </Button>
                     </Link>
-                    <Link href="/home" className="w-full">
+                    <Link href="/evm" className="w-full">
                       <Button 
                         className="w-full bg-blue-500 hover:bg-blue-600 text-primary-foreground 
                         text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
@@ -98,7 +98,7 @@ const LandingPage = () => {
                         text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
                         hover:scale-105 hover:shadow-lg hover:shadow-blue/20"
                       >
-                        Polkadot
+                        Polkadot ( Pop Network )
                       </Button>
                     </Link>
                   </div>

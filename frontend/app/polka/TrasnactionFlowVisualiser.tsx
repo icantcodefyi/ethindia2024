@@ -212,7 +212,7 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
                     onClick={() => setLogs([])}
                     className={cn(
                       "px-2 py-1 text-xs",
-                      "bg-white border-2 border-black rounded-lg",
+                      "bg-background border-2 border-black rounded-lg",
                       "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
                       "hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
                       "hover:translate-y-[-2px]",
@@ -228,7 +228,7 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
               <CardContent>
                 <ScrollArea className="h-24 w-full rounded-lg border-2 border-black p-2">
                   {logs.length === 0 ? (
-                    <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                    <div className="flex items-center justify-center h-full text-gray-100 text-sm">
                       No transaction logs yet
                     </div>
                   ) : (
@@ -239,12 +239,12 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
                           className={cn(
                             "font-mono text-xs p-2 rounded border-2 border-black",
                             "shadow-[2px_2px_0_0_rgba(0,0,0,1)]",
-                            log.type === "error" && "bg-red-50",
-                            log.type === "success" && "bg-green-50",
-                            log.type === "info" && "bg-blue-50"
+                            log.type === "error" && "bg-red-500",
+                            log.type === "success" && "bg-green-500",
+                            log.type === "info" && "bg-blue-500"
                           )}
                         >
-                          <span className="text-gray-500">
+                          <span className="text-gray-100">
                             [{log.timestamp.toLocaleTimeString()}]
                           </span>{" "}
                           {log.message}
@@ -279,39 +279,44 @@ const TransactionFlowVisualizer: React.FC<TransactionFlowVisualizerProps> = ({
               />
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col gap-4">
-                {blocks.map((block, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        "p-4 rounded-lg bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-1",
-                        block.category === "defi" && "border-pink-500",
-                        block.category === "contract" && "border-purple-500",
-                        block.category === "validation" && "border-green-500"
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        <block.icon size={16} className="text-black" />
-                        <span className="font-medium">{block.name}</span>
+              <ScrollArea className="w-full">
+                <div className="flex items-center gap-4 pb-4 overflow-x-auto">
+                  {blocks.map((block, index) => (
+                    <div key={index} className="flex items-center gap-2 flex-shrink-0">
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg bg-background border-2 border-black",
+                          "shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex-1",
+                          "hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]",
+                          "hover:translate-y-[-2px]",
+                          "transition-all duration-200 min-w-[300px]",
+                          block.category === "defi" && "border-pink-500",
+                          block.category === "contract" && "border-purple-500",
+                          block.category === "validation" && "border-green-500"
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <block.icon size={16} className="text-white h-4 w-4" />
+                          <span className="font-medium">{block.name}</span>
+                        </div>
+                        {renderBlockValues(index)}
                       </div>
-                      {renderBlockValues(index)}
+                      {index < blocks.length - 1 && (
+                        <ArrowRightLeft className="text-white h-4 w-4 flex-shrink-0" />
+                      )}
                     </div>
-                    {index < blocks.length - 1 && (
-                      <ArrowRightLeft className="text-black" />
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
 
           <Alert
             className={cn(
-              "border-2 border-black rounded-xl",
-              "shadow-[4px_4px_0_0_rgba(0,0,0,1)]",
-              getFlowStatus(blocks).type === "warning" && "border-yellow-500 bg-yellow-50",
-              getFlowStatus(blocks).type === "success" && "border-green-500 bg-green-50",
-              getFlowStatus(blocks).type === "error" && "border-red-500 bg-red-50"
+              "flex items-center gap-2 border-2 border-black rounded-xl",
+              getFlowStatus(blocks).type === "warning" && "border-yellow-500 bg-yellow-500",
+              getFlowStatus(blocks).type === "success" && "border-green-500 bg-green-500",
+              getFlowStatus(blocks).type === "error" && "border-red-500 bg-red-500"
             )}
           >
             <AlertCircle className="h-4 w-4" />

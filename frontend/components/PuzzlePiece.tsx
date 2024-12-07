@@ -62,6 +62,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
     return `Current chain expects: ${compatibleBlockNames}`;
   };
 
+  console.log(totalHeight,baseHeight);
   const PieceContent = () => (
     <div
       className={cn(
@@ -167,11 +168,11 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
           x={isChainPiece ? "40" : "40"}
           y={isChainPiece ? "20" : "30"}
           width={isChainPiece ? totalWidth - 80 : baseWidth - 80}
-          height={isChainPiece ? totalHeight - 40 : baseHeight - 60}
+          height={isChainPiece ? totalHeight - 120 : baseHeight - 60}
         >
-          <div className="w-full h-full flex flex-col items-center justify-start">
+          <div className="w-full h-full flex flex-col items-center justify-center">
             <block.icon
-              size={32}
+              size={16}
               className={cn(
                 "mb-2",
                 isGreyedOut ? "text-primary/30" : "text-primary"
@@ -179,7 +180,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
             />
             <span
               className={cn(
-                "font-bold text-sm mb-4 text-center truncate",
+                "font-bold text-sm mb-4 text-center",
                 isGreyedOut ? "text-primary/30" : "text-primary"
               )}
             >
@@ -190,7 +191,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
               <div className="w-full space-y-4">
                 {block.inputs.map((input, idx) => (
                   <div key={idx} className="w-full px-4">
-                    <label className="text-xs font-semibold mb-1.5 block truncate text-muted-foreground">
+                    <label className="text-xs font-semibold mb-1.5 block text-muted-foreground">
                       {input.label}
                     </label>
                     <div className="relative">
@@ -252,7 +253,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
             onDragStart={onDragStart}
             onClick={onClick}
             className={cn(
-              "relative w-full min-w-[200px]",
+              "relative w-full min-w-[250px]",
               isChainPiece ? "max-w-[280px]" : "max-w-[240px]",
               "transition-all duration-300",
               !isChainPiece &&
@@ -281,7 +282,7 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
       onDragStart={onDragStart}
       onClick={onClick}
       className={cn(
-        "relative w-full min-w-[200px]",
+        "relative w-full",
         isChainPiece ? "max-w-[280px]" : "max-w-[240px]",
         "transition-all duration-300",
         !isChainPiece &&
@@ -297,4 +298,3 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
 };
 
 export default PuzzlePiece;
-
