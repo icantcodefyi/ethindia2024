@@ -1,8 +1,14 @@
-import React from "react";
-import WalletConnector from "./WalletConnector";
+"use client";
+import { createThirdwebClient } from "thirdweb";
+import { ConnectButton } from "thirdweb/react";
+
 import { IconCurrencyEthereum } from "@tabler/icons-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+const client = createThirdwebClient({
+  clientId: "c9c8224aed814544cf52b20807cfa50e",
+});
 
 const Header = () => {
   return (
@@ -33,7 +39,7 @@ const Header = () => {
           </Link>
 
           {/* Network Status + Wallet */}
-          <div className="flex items-center gap-4 mr-[100px]">
+          <div className="flex items-center gap-4">
             <div
               className={cn(
                 "hidden sm:flex items-center gap-2 px-4 py-2",
@@ -45,7 +51,7 @@ const Header = () => {
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span>Testnet</span>
             </div>
-            <WalletConnector />
+            <ConnectButton client={client} connectModal={{ size: "wide" }} />
           </div>
         </div>
       </div>
