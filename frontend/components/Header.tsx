@@ -5,6 +5,7 @@ import { ConnectButton } from "thirdweb/react";
 import { IconCurrencyEthereum } from "@tabler/icons-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { polygonAmoy } from "thirdweb/chains";
 
 const client = createThirdwebClient({
   clientId: "c9c8224aed814544cf52b20807cfa50e",
@@ -51,7 +52,11 @@ const Header = () => {
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span>Testnet</span>
             </div>
-            <ConnectButton client={client} connectModal={{ size: "wide" }} />
+            <ConnectButton
+              client={client}
+              connectModal={{ size: "wide" }}
+              chain={polygonAmoy}
+            />
           </div>
         </div>
       </div>

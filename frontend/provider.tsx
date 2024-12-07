@@ -1,9 +1,9 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { base } from 'viem/chains';
+import { base } from "viem/chains";
 import { Network, SatsWagmiConfig } from "@gobob/sats-wagmi";
 import { ThirdwebProvider } from "thirdweb/react";
-import { OnchainKitProvider } from '@coinbase/onchainkit';
+import { OnchainKitProvider } from "@coinbase/onchainkit";
 import { WalletProvider } from "./providers/WalletProvider";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
@@ -16,6 +16,7 @@ import { OpenBlockWallet } from "@openblockhq/aptos-wallet-adapter";
 import { TokenPocketWallet } from "@tp-lab/aptos-wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
 import { WelldoneWallet } from "@welldone-studio/aptos-wallet-adapter";
+import { polygonAmoy } from "thirdweb/chains";
 
 const queryClient = new QueryClient();
 
@@ -40,12 +41,16 @@ export default function Provider({
   return (
     <QueryClientProvider client={queryClient}>
       <ThirdwebProvider>
-        <OnchainKitProvider apiKey="uaBZtCjdJYxz2ViQAjIaEq2e5RDirLBY" chain={base}>
-          <SatsWagmiConfig network={"testnet" as Network} queryClient={queryClient}>
+        <OnchainKitProvider
+          apiKey="uaBZtCjdJYxz2ViQAjIaEq2e5RDirLBY"
+          chain={base}
+        >
+          <SatsWagmiConfig
+            network={"testnet" as Network}
+            queryClient={queryClient}
+          >
             <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-              <WalletProvider>
-                {children}
-              </WalletProvider>
+              <WalletProvider>{children}</WalletProvider>
             </AptosWalletAdapterProvider>
           </SatsWagmiConfig>
         </OnchainKitProvider>
