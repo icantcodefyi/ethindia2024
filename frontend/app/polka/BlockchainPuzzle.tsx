@@ -1,11 +1,11 @@
 import {
   getAvailableTechnologies,
   getBlocksByTechnology,
-} from "@/lib/polkadot";
+} from "@/constants/polkadot";
 import { Folder, RotateCcw } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import PuzzlePiece from "@/components/PuzzlePiece";
-import TransactionFlowVisualizer from "@/components/TrasnactionFlowVisualiser";
+import TransactionFlowVisualizer from "./TrasnactionFlowVisualiser";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
