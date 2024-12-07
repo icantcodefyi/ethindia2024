@@ -68,25 +68,40 @@ const LandingPage = () => {
                     Choose Your Chain
                   </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-row gap-6">
-                  <Link href="/move" className="w-full">
-                    <Button 
-                      className="w-full bg-secondary/80 hover:bg-secondary text-primary-foreground 
-                      text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
-                      hover:scale-105 hover:shadow-lg hover:shadow-secondary/20"
-                    >
-                      Move Protocol
-                    </Button>
-                  </Link>
-                  <Link href="/home" className="w-full">
-                    <Button 
-                      className="w-full bg-primary/80 hover:bg-primary text-primary-foreground 
-                      text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
-                      hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
-                    >
-                      EVM Chain
-                    </Button>
-                  </Link>
+                {/* Top row with Move and EVM */}
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-row gap-6">
+                    <Link href="/move" className="w-full">
+                      <Button 
+                        className="w-full bg-red-500 hover:bg-red-600 text-primary-foreground 
+                        text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
+                        hover:scale-105 hover:shadow-lg hover:shadow-secondary/20"
+                      >
+                        Move Protocol
+                      </Button>
+                    </Link>
+                    <Link href="/home" className="w-full">
+                      <Button 
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-primary-foreground 
+                        text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
+                        hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
+                      >
+                        EVM Chain
+                      </Button>
+                    </Link>
+                  </div>
+                  {/* Bottom row with Polkadot */}
+                  <div className="flex justify-center">
+                    <Link href="/polka" className="w-2/3">
+                      <Button 
+                        className="w-full bg-pink-500 hover:bg-pink-600 text-primary-foreground 
+                        text-lg font-bold px-6 py-6 rounded-xl transition-all duration-300 
+                        hover:scale-105 hover:shadow-lg hover:shadow-blue/20"
+                      >
+                        Polkadot
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

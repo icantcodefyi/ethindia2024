@@ -13,44 +13,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Copy } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-
-// Dynamic import of SyntaxHighlighter
-const DynamicSyntaxHighlighter = dynamic(
-  async () => {
-    const { Prism: SyntaxHighlighter } = await import("react-syntax-highlighter");
-    const { vscDarkPlus } = await import(
-      "react-syntax-highlighter/dist/esm/styles/prism"
-    );
-    return function CodeHighlighter({
-      children,
-      language,
-    }: {
-      children: string;
-      language: string;
-    }) {
-      return (
-        <SyntaxHighlighter
-          style={vscDarkPlus}
-          language={language}
-          customStyle={{
-            margin: 0,
-            borderRadius: "0.5rem",
-            background: "transparent",
-          }}
-          PreTag="div"
-        >
-          {children}
-        </SyntaxHighlighter>
-      );
-    };
-  },
-  {
-    ssr: false,
-    loading: () => <pre>Loading syntax highlighter...</pre>,
-  }
-);
 
 export default function Home() {
   const [language, setLanguage] = useState<"ink" | "move">("ink");

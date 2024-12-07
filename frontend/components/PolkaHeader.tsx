@@ -1,65 +1,49 @@
 import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { StarKeyProvider } from "@/types/starkey";
+import { getWallets } from '@talismn/connect-wallets';
 
-const MoveHeader = () => {
-  const [starkeyAddress, setStarkeyAddress] = React.useState<string | null>(null);
+const PolkaHeader = () => {
+  const [walletAddress, setWalletAddress] = React.useState<string | null>(null);
+  const [talismanWallet, setTalismanWallet] = React.useState<any>(null);
 
-  const getStarkeyProvider = (): StarKeyProvider['supra'] | null => {
-    if ('starkey' in window && window.starkey?.supra) {
-      return window.starkey.supra;
-    }
-    return null;
-  };
+  const connectWallet = async () => {
+    const installedWallets = getWallets().filter((wallet) => wallet.installed);
+    const wallet = installedWallets.find(
+      (wallet) => wallet.extensionName === 'talisman',
+    );
 
-  const connectStarkey = async () => {
-    const provider = getStarkeyProvider();
-    if (!provider) {
-      window.open('https://starkey.app/', '_blank');
+    if (!wallet) {
+      window.open('https://talisman.xyz/download', '_blank');
       return;
     }
 
     try {
-      const accounts = await provider.connect();
-      if (accounts[0]) {
-        setStarkeyAddress(accounts[0]);
-      }
-    } catch (err) {
-      console.error("Failed to connect to StarKey:", err);
-    }
-  };
-
-  const disconnectStarkey = async () => {
-    const provider = getStarkeyProvider();
-    if (!provider) return;
-
-    try {
-      await provider.disconnect();
-      setStarkeyAddress(null);
-    } catch (err) {
-      console.error("Failed to disconnect StarKey:", err);
-    }
-  };
-
-  React.useEffect(() => {
-    const provider = getStarkeyProvider();
-    if (provider) {
-      provider.on('accountChanged', (accounts: string[]) => {
+      await wallet.enable('ContractCraft');
+      setTalismanWallet(wallet);
+      wallet.subscribeAccounts((accounts: any[]) => {
         if (accounts.length > 0) {
-          setStarkeyAddress(accounts[0]);
+          setWalletAddress(accounts[0].address);
         } else {
-          setStarkeyAddress(null);
+          setWalletAddress(null);
         }
       });
+    } catch (err) {
+      console.error("Failed to connect to Talisman:", err);
     }
-  }, []);
+  };
+
+  const disconnectWallet = async () => {
+    if (talismanWallet) {
+      setWalletAddress(null);
+      setTalismanWallet(null);
+    }
+  };
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] bg-background backdrop-blur-md border-b border-primary/20">
       <div className="max-w-7xl mx-auto h-16 px-6">
         <div className="flex items-center justify-between h-full">
-          {/* Logo and Project Name */}
           <Link
             href="/"
             className={cn(
@@ -71,21 +55,20 @@ const MoveHeader = () => {
           >
             <div className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://supra.com/images/brand/SupraOracles-Red-Light-Symbol.svg" width={28} height={28} alt="Supra Logo" />
+              <img src="/polkadot-logo.svg" width={28} height={28} alt="Polkadot Logo" />
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-bold text-xl tracking-tight text-foreground">
                 ContractCraft
               </span>
               <span className="text-xs font-medium text-muted-foreground tracking-tight">
-                Move Smart Contract Platform
+                Polkadot Smart Contract Platform
               </span>
             </div>
           </Link>
 
-          {/* Wallet Connection */}
           <div className="flex items-center gap-4">
-            {starkeyAddress ? (
+            {walletAddress ? (
               <div className="flex items-center gap-4">
                 <div className={cn(
                   "hidden sm:flex items-center gap-2 px-4 py-2",
@@ -94,10 +77,10 @@ const MoveHeader = () => {
                   "font-medium text-sm text-foreground"
                 )}>
                   <div className="w-2 h-2 rounded-full animate-pulse bg-green-500" />
-                  <span className="w-full">{starkeyAddress}</span>
+                  <span className="w-full">{walletAddress}</span>
                 </div>
                 <button
-                  onClick={disconnectStarkey}
+                  onClick={disconnectWallet}
                   className="px-4 py-2 text-sm font-medium text-red-500 hover:text-red-600 transition-colors"
                 >
                   Disconnect
@@ -105,15 +88,15 @@ const MoveHeader = () => {
               </div>
             ) : (
               <button
-                onClick={connectStarkey}
+                onClick={connectWallet}
                 className={cn(
                   "px-4 py-2 rounded-xl",
-                  "bg-red-500 hover:bg-red-600",
+                  "bg-pink-500 hover:bg-pink-600",
                   "text-white font-medium text-sm",
                   "transition-colors"
                 )}
               >
-                Connect StarKey
+                Connect Talisman
               </button>
             )}
           </div>
@@ -123,4 +106,4 @@ const MoveHeader = () => {
   );
 };
 
-export default MoveHeader; 
+export default PolkaHeader; 
