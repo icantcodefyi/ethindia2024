@@ -13,6 +13,9 @@ mod polkadot {
         /// Mapping of the token amount which an account is allowed to withdraw
         /// from another account.
         allowances: Mapping<(AccountId, AccountId), Balance>,
+        /// Mapping of the token amount which an account is allowed to mint
+        /// from another account.
+        swap_pairs: Mapping<(AccountId, AccountId), Balance>,
     }
     /// Event emitted when a token transfer occurs.
     #[ink(event)]
@@ -32,6 +35,20 @@ mod polkadot {
         #[ink(topic)]
         spender: AccountId,
         value: Balance,
+    }
+    /// Event emitted when new tokens are minted.
+    #[ink(event)]
+    pub struct TokenMinted {
+        #[ink(topic)]
+        account: AccountId,
+        amount: Balance,
+    }
+    /// Event emitted when tokens are burned.
+    #[ink(event)]
+    pub struct TokenBurned {
+        #[ink(topic)]
+        account: AccountId,
+        amount: Balance,
     }
     /// The ERC-20 error types.
     #[derive(Debug, PartialEq, Eq)]
@@ -60,6 +77,7 @@ mod polkadot {
                 total_supply,
                 balances,
                 allowances: Default::default(),
+                swap_pairs: Default::default(),
             }
         }
         /// Returns the total token supply.
@@ -198,6 +216,55 @@ mod polkadot {
                 to: Some(*to),
                 value,
             });
+            Ok(())
+        }
+        /// Mint new tokens
+        #[ink(message)]
+        pub fn mint(&mut self, amount: Balance) -> Result<()> {
+            let caller = self.env().caller();
+            
+            // Get current liquidity (if any)
+            let current_balance = self.swap_pairs
+                .get(&(caller, caller))  // Using (caller, caller) as special case for base token
+                .unwrap_or(0);
+            
+            // Add minted amount to caller's balance
+            self.swap_pairs
+                .insert(&(caller, caller), &(current_balance + amount));
+
+            // Emit event for minting
+            self.env().emit_event(TokenMinted {
+                account: caller,
+                amount,
+            });
+
+            Ok(())
+        }
+        /// Burn tokens
+        #[ink(message)]
+        pub fn burn(&mut self, amount: Balance) -> Result<()> {
+            let caller = self.env().caller();
+            
+            // Get current balance
+            let current_balance = self.swap_pairs
+                .get(&(caller, caller))
+                .unwrap_or(0);
+            
+            // Check if caller has enough balance
+            if current_balance < amount {
+                return Err(Error::InsufficientBalance)
+            }
+            
+            // Subtract burned amount
+            self.swap_pairs
+                .insert(&(caller, caller), &(current_balance - amount));
+
+            // Emit event for burning
+            self.env().emit_event(TokenBurned {
+                account: caller,
+                amount,
+            });
+
             Ok(())
         }
     }
