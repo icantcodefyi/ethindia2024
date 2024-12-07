@@ -274,7 +274,6 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
       </TooltipProvider>
     );
   }
-
   // Return without tooltip for chain pieces
   return (
     <div
@@ -298,3 +297,4 @@ const PuzzlePiece: React.FC<PuzzlePieceProps> = ({
 };
 
 export default PuzzlePiece;
+
