@@ -7,7 +7,7 @@ import {
   Send,
 } from "lucide-react";
 
-interface BlockType {
+export interface BlockType {
   id: string;
   name: string;
   color: string;

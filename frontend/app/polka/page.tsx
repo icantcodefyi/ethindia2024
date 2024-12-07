@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PolkaHeader from '@/components/PolkaHeader';
+import BlockchainPuzzle from './BlockchainPuzzle';
 
 export default function PolkaPage() {
   return (
@@ -10,6 +11,7 @@ export default function PolkaPage() {
       <div className="max-w-7xl mx-auto px-6 pt-24">
         <h1 className="text-4xl font-bold">Polkadot Smart Contract Platform</h1>
       </div>
+      <BlockchainPuzzle />
     </main>
   );
 }
