@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     const systemMessage = SYSTEM_PROMPTS[validLanguage].replace(
       "{{KNOWLEDGE_BASE}}",
       JSON.stringify(knowledgeBase)
-    );
+    ) + "\n\nDO NOT INCLUDE ```move or ```ink in the code";
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini-2024-07-18",
