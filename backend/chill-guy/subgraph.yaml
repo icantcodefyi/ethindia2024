@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MyERC20Token
+    network: polygon-amoy
+    source:
+      address: "0xF77564e712bA1855969A3928524612aAD39F0366"
+      abi: MyERC20Token
+      startBlock: 15320839
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - Transfer
+      abis:
+        - name: MyERC20Token
+          file: ./abis/MyERC20Token.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/my-erc-20-token.ts
