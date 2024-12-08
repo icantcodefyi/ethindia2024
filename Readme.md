@@ -47,6 +47,29 @@ ContractCraft has been submitted under the following tracks:
 - **Cairo**: Smart contract for Starknet.
 ---
 
+## Verified and Deployed Contract Addresses
+
+Our smart contract has been deployed on the following chains to ensure interoperability and accessibility:
+
+| **Blockchain** | **Network**    | **Contract Address**           |
+|-----------------|----------------|---------------------------------|
+| Base           | Sepolia        | https://sepolia.basescan.org/address/0xE713B6AE9b11a3B394438246340D53596BFb84Cd#code |
+| Polygon        | Amoy           | https://amoy.polygonscan.com/address/0xF77564e712bA1855969A3928524612aAD39F0366 |
+| Citrea         | Testnet        | https://explorer.testnet.citrea.xyz/address/0x8c950ef8f022e96477fCE3C5D72FBaa9fC41Fc9c?tab=contract |
+| Polkadot       | Testnet        | `14xwNWLysQ6m9bwEPuuydMkvtbmVQukYgmjYLzouVF1JowHr`|
+| opBNB          | Testnet        | https://opbnb-testnet.bscscan.com/address/0xF77564e712bA1855969A3928524612aAD39F0366#code |
+| Supra          | Testnet        | https://testnet.suprascan.io/address/0x05c81634add84286cd674e62c1e3e9d7576b3e5cce5f41508aab836a629c0d0a/f?tab=addr-transaction&pageNo=1&rows=10 |
+| Starknet       | Testnet        | https://sepolia.starkscan.co/tx/0x5abc3a13f82c0ec643bfda226454a89839a9d0410a093fff7c9acd79f37287b |
+
+
+## How to Verify
+
+1. Navigate to the blockchain explorer for the respective chain.
+2. Enter the provided contract address in the search bar.
+3. Review the contract details and verify deployment.
+
+---
+
 ## Future Scope
 
 ContractCraft envisions a future where creating and deploying smart contracts is as simple as clicking a button. Here are the key enhancements planned for the platform:
