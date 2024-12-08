@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { BlockType } from "@/constants/paths";
 import { StarKeyProvider } from "@/types/starkey";
+import { SUPRA_TOKEN_CONTRACT, createSupraTransactionData } from "@/constants/contracts";
 
 interface ExecuteButtonProps {
   blocks: BlockType[];
@@ -74,17 +75,80 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
           const provider = getStarkeyProvider();
           if (!provider) throw new Error("StarKey provider not found");
 
+          // @ts-ignore
+          window.meow = provider;
+
+          if(!starkeyAddress) throw new Error("StarKey address not found");
+
           switch (block.id) {
-            // case "evm_mint":
-            //   if (!blockValues["Account Address"] || !blockValues["Amount"]) {
-            //     throw new Error("Missing required parameters for mint");
-            //   }
-            //   sendTransaction(prepareContractCall({
-            //     contract,
-            //     method: "function mint(address _to, uint256 _value)",
-            //     params: [blockValues["Account Address"], BigInt(blockValues["Amount"])],
-            //   }));
-            //   break;
+            case "supra_transfer":
+              if (!blockValues["Recipient Address"] || !blockValues["Amount"]) {
+                throw new Error("Missing required parameters for transfer");
+              }
+              const transferData = await provider.createRawTransactionData({
+                ...createSupraTransactionData("transfer", [
+                  blockValues["Recipient Address"],
+                  BigInt(blockValues["Amount"]).toString()
+                ])
+              });
+              
+              await provider.sendTransaction({
+                from: starkeyAddress,
+                to: SUPRA_TOKEN_CONTRACT.address,
+                data: transferData,
+                value: "0"
+              });
+              break;
+
+            case "supra_mint":
+              if (!blockValues["Recipient Address"] || !blockValues["Amount"]) {
+                throw new Error("Missing required parameters for mint");
+              }
+              const mintData = await provider.createRawTransactionData({
+                ...createSupraTransactionData("mint", [
+                  blockValues["Recipient Address"],
+                  BigInt(blockValues["Amount"]).toString()
+                ])
+              });
+              
+              await provider.sendTransaction({
+                from: starkeyAddress,
+                to: SUPRA_TOKEN_CONTRACT.address,
+                data: mintData,
+                value: "0"
+              });
+              break;
+
+            case "supra_balance_of":
+              if (!blockValues["Account Address"]) {
+                throw new Error("Missing account address for balance check");
+              }
+              const balanceData = await provider.createRawTransactionData({
+                ...createSupraTransactionData("balance_of", [
+                  blockValues["Account Address"]
+                ])
+              });
+              
+              await provider.sendTransaction({
+                from: starkeyAddress,
+                to: SUPRA_TOKEN_CONTRACT.address,
+                data: balanceData,
+                value: "0"
+              });
+              break;
+
+            case "supra_publish_balance":
+              const publishData = await provider.createRawTransactionData({
+                ...createSupraTransactionData("publish_balance", [])
+              });
+              
+              await provider.sendTransaction({
+                from: starkeyAddress,
+                to: SUPRA_TOKEN_CONTRACT.address,
+                data: publishData,
+                value: "0"
+              });
+              break;
 
             default:
               onLog(`Unknown block type: ${block.id}`, "error");
