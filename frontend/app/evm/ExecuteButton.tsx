@@ -1,4 +1,3 @@
-// ExecuteButton.tsx
 import React, { useState } from "react";
 import { Play, Loader2, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,21 +28,35 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
   const account = useActiveAccount();
   const { mutate: sendTransaction, data, status } = useSendTransaction();
 
-  // Monitor transaction status
+  // Monitor transaction status and handle next block execution
   React.useEffect(() => {
+    if (!isExecuting) return;
+
     if (status === "pending") {
       onLog("Waiting for wallet confirmation...", "info");
     } else if (status === "error") {
-      onLog("Transaction failed", "error");
       setIsExecuting(false);
+      onLog("Transaction failed", "error");
     } else if (status === "success" && data) {
       onLog(`Transaction confirmed! Hash: ${data.transactionHash}`, "success");
-      // Move to next block after successful transaction
-      setCurrentBlockIndex(prev => prev + 1);
-      setIsExecuting(false);
+      
+      // Move to next block if there are more
+      if (currentBlockIndex < blocks.length - 1) {
+        setCurrentBlockIndex(prev => prev + 1);
+        executeBlock(currentBlockIndex + 1);
+      } else {
+        // All blocks completed
+        setIsExecuting(false);
+        setCurrentBlockIndex(0);
+        toast({
+          title: "Operations Complete",
+          description: "All operations executed successfully",
+        });
+      }
     }
-  }, [status, data, onLog]);
+  }, [status, data, currentBlockIndex, blocks.length]);
 
+  // Move contract initialization inside useEffect or memoize it
   const contract = React.useMemo(() => {
     try {
       if (!client) return null;
@@ -59,117 +72,143 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
     }
   }, []);
 
-  const executeBlock = async (block: BlockType, blockIndex: number) => {
+  const executeBlock = async (blockIndex: number) => {
+    const block = blocks[blockIndex];
     const blockValues = values[`chain-${blockIndex}`] || {};
 
-    switch (block.id) {
-      case "evm_mint":
-        if (!blockValues["Account Address"] || !blockValues["Amount"]) {
-          throw new Error("Missing required parameters for mint");
-        }
-        sendTransaction(prepareContractCall({
-          contract,
-          method: "function mint(address _to, uint256 _value)",
-          params: [blockValues["Account Address"], BigInt(blockValues["Amount"])],
-        }));
-        break;
+    onLog(`Executing ${block.name}...`, "info");
 
-      case "evm_transfer":
-        if (!blockValues["Recipient Address"] || !blockValues["Amount"]) {
-          throw new Error("Missing required parameters for transfer");
-        }
-        sendTransaction(prepareContractCall({
-          contract,
-          method: "function transfer(address _to, uint256 _value)",
-          params: [blockValues["Recipient Address"], BigInt(blockValues["Amount"])],
-        }));
-        break;
-
-      case "evm_approve":
-        if (!blockValues["Spender Address"] || !blockValues["Amount"]) {
-          throw new Error("Missing required parameters for approve");
-        }
-        sendTransaction(prepareContractCall({
-          contract,
-          method: "function approve(address _spender, uint256 _value)",
-          params: [blockValues["Spender Address"], BigInt(blockValues["Amount"])],
-        }));
-        break;
-
-      case "evm_burn":
-        if (!blockValues["Amount"]) {
-          throw new Error("Missing required parameters for burn");
-        }
-        sendTransaction(prepareContractCall({
-          contract,
-          method: "function burn(uint256 _value)",
-          params: [BigInt(blockValues["Amount"])],
-        }));
-        break;
-
-      case "evm_transfer_from":
-        if (!blockValues["From Address"] || !blockValues["To Address"] || !blockValues["Amount"]) {
-          throw new Error("Missing required parameters for transferFrom");
-        }
-        sendTransaction(prepareContractCall({
-          contract,
-          method: "function transferFrom(address _from, address _to, uint256 _value)",
-          params: [
-            blockValues["From Address"],
-            blockValues["To Address"],
-            BigInt(blockValues["Amount"])
-          ],
-        }));
-        break;
-
-      case "evm_balance_of":
-        if (!blockValues["Account Address"]) {
-          throw new Error("Missing required parameters for balanceOf");
-        }
-        const balance = await contract?.call("balanceOf", [blockValues["Account Address"]]);
-        onLog(`Balance: ${balance.toString()} TKN`, "success");
-        setCurrentBlockIndex(prev => prev + 1);
-        break;
-
-      case "evm_allowance":
-        if (!blockValues["Owner Address"] || !blockValues["Spender Address"]) {
-          throw new Error("Missing required parameters for allowance");
-        }
-        const allowance = await contract?.call("allowance", [
-          blockValues["Owner Address"],
-          blockValues["Spender Address"]
-        ]);
-        onLog(`Allowance: ${allowance.toString()} TKN`, "success");
-        setCurrentBlockIndex(prev => prev + 1);
-        break;
-
-      case "evm_total_supply":
-        const totalSupply = await contract?.call("totalSupply");
-        onLog(`Total Supply: ${totalSupply.toString()} TKN`, "success");
-        setCurrentBlockIndex(prev => prev + 1);
-        break;
-
-      case "evm_decimals":
-        const decimals = await contract?.call("decimals");
-        onLog(`Decimals: ${decimals.toString()}`, "success");
-        setCurrentBlockIndex(prev => prev + 1);
-        break;
-
-      case "evm_name":
-        const name = await contract?.call("name");
-        onLog(`Token Name: ${name}`, "success");
-        setCurrentBlockIndex(prev => prev + 1);
-        break;
-
-      case "evm_symbol":
-        const symbol = await contract?.call("symbol");
-        onLog(`Token Symbol: ${symbol}`, "success");
-        setCurrentBlockIndex(prev => prev + 1);
-        break;
-
-      default:
-        onLog(`Unknown block type: ${block.id}`, "error");
-        setCurrentBlockIndex(prev => prev + 1);
+    try {
+      switch (block.id) {
+        case "evm_mint":
+          if (!blockValues["Account Address"] || !blockValues["Amount"]) {
+            throw new Error("Missing required parameters for mint");
+          }
+          sendTransaction(prepareContractCall({
+            contract: contract!,
+            method: "function mint(address _to, uint256 _value)",
+            params: [blockValues["Account Address"], BigInt(blockValues["Amount"])],
+          }));
+          break;
+        case "evm_transfer":
+          if (!blockValues["Recipient Address"] || !blockValues["Amount"]) {
+            throw new Error("Missing required parameters for transfer");
+          }
+          sendTransaction(prepareContractCall({
+            contract: contract!,
+            method: "function transfer(address _to, uint256 _value)",
+            params: [blockValues["Recipient Address"], BigInt(blockValues["Amount"])],
+          }));
+          break;
+        case "evm_approve":
+          if (!blockValues["Spender Address"] || !blockValues["Amount"]) {
+            throw new Error("Missing required parameters for approve");
+          }
+          sendTransaction(prepareContractCall({
+            contract: contract!,
+            method: "function approve(address _spender, uint256 _value)",
+            params: [blockValues["Spender Address"], BigInt(blockValues["Amount"])],
+          }));
+          break;
+        case "evm_burn":
+          if (!blockValues["Amount"]) {
+            throw new Error("Missing required parameters for burn");
+          }
+          sendTransaction(prepareContractCall({
+            contract: contract!,
+            method: "function burn(uint256 _value)",
+            params: [BigInt(blockValues["Amount"])],
+          }));
+          break;
+        case "evm_transfer_from":
+          if (!blockValues["From Address"] || !blockValues["To Address"] || !blockValues["Amount"]) {
+            throw new Error("Missing required parameters for transferFrom");
+          }
+          sendTransaction(prepareContractCall({
+            contract: contract!,
+            method: "function transferFrom(address _from, address _to, uint256 _value)",
+            params: [
+              blockValues["From Address"],
+              blockValues["To Address"],
+              BigInt(blockValues["Amount"])
+            ],
+          }));
+          break;
+        case "evm_balance_of":
+          if (!blockValues["Account Address"]) {
+            throw new Error("Missing required parameters for balanceOf");
+          }
+          const { data: balance } = await useReadContract({
+            contract: contract!,
+            method: "function balanceOf(address _owner) view returns (uint256)",
+            params: [blockValues["Account Address"]],
+          });
+          onLog(`Balance: ${balance?.toString()} TKN`, "success");
+          // Move to next block immediately for read operations
+          if (currentBlockIndex < blocks.length - 1) {
+            setCurrentBlockIndex(prev => prev + 1);
+            executeBlock(currentBlockIndex + 1);
+          } else {
+            setIsExecuting(false);
+            setCurrentBlockIndex(0);
+          }
+          break;
+        case "evm_allowance":
+          if (!blockValues["Owner Address"] || !blockValues["Spender Address"]) {
+            throw new Error("Missing required parameters for allowance");
+          }
+          const { data: allowance } = await useReadContract({
+            contract: contract!,
+            method: "function allowance(address _owner, address _spender) view returns (uint256)",
+            params: [blockValues["Owner Address"], blockValues["Spender Address"]],
+          });
+          onLog(`Allowance: ${allowance?.toString()} TKN`, "success");
+          break;
+        case "evm_total_supply":
+          const { data: totalSupply } = await useReadContract({
+            contract: contract!,
+            method: "function totalSupply() view returns (uint256)",
+            params: [],
+          });
+          onLog(`Total Supply: ${totalSupply?.toString()} TKN`, "success");
+          break;
+        case "evm_decimals":
+          const { data: decimals } = await useReadContract({
+            contract: contract!,
+            method: "function decimals() view returns (uint8)",
+            params: [],
+          });
+          onLog(`Decimals: ${decimals?.toString()}`, "success");
+          break;
+        case "evm_name":
+          const { data: name } = await useReadContract({
+            contract: contract!,
+            method: "function name() view returns (string)",
+            params: [],
+          });
+          onLog(`Token Name: ${name}`, "success");
+          break;
+        case "evm_symbol":
+          const { data: symbol } = await useReadContract({
+            contract: contract!,
+            method: "function symbol() view returns (string)",
+            params: [],
+          });
+          onLog(`Token Symbol: ${symbol}`, "success");
+          break;
+        default:
+          onLog(`Unknown block type: ${block.id}`, "error");
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      onLog(`Error executing ${block.name}: ${errorMessage}`, "error");
+      setIsExecuting(false);
+      setCurrentBlockIndex(0);
+      toast({
+        title: "Operation Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
@@ -183,31 +222,9 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
       return;
     }
 
-    try {
-      setIsExecuting(true);
-      const currentBlock = blocks[currentBlockIndex];
-      if (currentBlock) {
-        onLog(`Executing ${currentBlock.name}...`, "info");
-        await executeBlock(currentBlock, currentBlockIndex);
-      }
-
-      if (currentBlockIndex >= blocks.length) {
-        toast({
-          title: "Operations Complete",
-          description: "All operations executed successfully",
-        });
-        setCurrentBlockIndex(0);
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      toast({
-        title: "Operation Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-      setIsExecuting(false);
-      setCurrentBlockIndex(0);
-    }
+    setIsExecuting(true);
+    setCurrentBlockIndex(0);
+    executeBlock(0);
   };
 
   return (
@@ -241,5 +258,4 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({
     </Button>
   );
 };
-
 export default ExecuteButton;

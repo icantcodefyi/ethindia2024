@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 
 // Define supported languages type
-type SupportedLanguage = "ink" | "move" | "solidity";
+type SupportedLanguage = "ink" | "move" | "solidity" | "starknet";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -39,6 +39,14 @@ const SYSTEM_PROMPTS: Record<SupportedLanguage, string> = {
     Avoid arithmetic operations - use SafeMath or similar libraries instead.
     Include proper access controls and follow established security patterns.
     ONLY GENERATE THE CODE NOTHING ELSE IS NEEDED`,
+  starknet: `You are an expert Starknet smart contract developer for the Starknet ecosystem.
+    Focus on Starknet's unique features and Starknet's specific patterns.
+    Use this knowledge base as reference: {{KNOWLEDGE_BASE}}
+    Generate accurate and efficient Starknet code based on the user's request.
+    Ensure proper resource management and type safety.
+    Avoid arithmetic operations - use safe math functions instead.
+    Include comprehensive error handling and follow Starknet best practices.
+    ONLY GENERATE THE CODE NOTHING ELSE IS NEEDED`,
 };
 
 // Load knowledge base
@@ -62,7 +70,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!["ink", "move", "solidity"].includes(language)) {
+    if (!["ink", "move", "solidity", "starknet"].includes(language)) {
       return NextResponse.json({ error: "Invalid language" }, { status: 400 });
     }
 

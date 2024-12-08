@@ -5,37 +5,14 @@ import { Network, SatsWagmiConfig } from "@gobob/sats-wagmi";
 import { ThirdwebProvider } from "thirdweb/react";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 import { WalletProvider } from "./providers/WalletProvider";
-import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
-import { PetraWallet } from "petra-plugin-wallet-adapter";
-import { MartianWallet } from "@martianwallet/aptos-wallet-adapter";
-import { PontemWallet } from "@pontem/wallet-adapter-plugin";
-import { RiseWallet } from "@rise-wallet/wallet-adapter";
-import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
-import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
-import { OpenBlockWallet } from "@openblockhq/aptos-wallet-adapter";
-import { TokenPocketWallet } from "@tp-lab/aptos-wallet-adapter";
-import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
-import { WelldoneWallet } from "@welldone-studio/aptos-wallet-adapter";
 import { createThirdwebClient } from "thirdweb";
+import { StarknetProvider } from "./components/starknet-provider";
 
 export const client = createThirdwebClient({
   clientId: "07edaeb20640aa496191f50d884c2dda"
 });
 
 const queryClient = new QueryClient();
-
-const wallets = [
-  new PetraWallet(),
-  new MartianWallet(),
-  new PontemWallet(),
-  new RiseWallet(),
-  new FewchaWallet(),
-  new NightlyWallet(),
-  new OpenBlockWallet(),
-  new TokenPocketWallet(),
-  new TrustWallet(),
-  new WelldoneWallet(),
-];
 
 export default function Provider({
   children,
@@ -45,19 +22,19 @@ export default function Provider({
   return (
     <QueryClientProvider client={queryClient}>
       <ThirdwebProvider>
-        <OnchainKitProvider
-          apiKey="uaBZtCjdJYxz2ViQAjIaEq2e5RDirLBY"
-          chain={base}
-        >
-          <SatsWagmiConfig
-            network={"testnet" as Network}
-            queryClient={queryClient}
+        <StarknetProvider>
+          <OnchainKitProvider
+            apiKey="uaBZtCjdJYxz2ViQAjIaEq2e5RDirLBY"
+            chain={base}
           >
-            <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
+            <SatsWagmiConfig
+              network={"testnet" as Network}
+              queryClient={queryClient}
+            >
               <WalletProvider>{children}</WalletProvider>
-            </AptosWalletAdapterProvider>
-          </SatsWagmiConfig>
-        </OnchainKitProvider>
+            </SatsWagmiConfig>
+          </OnchainKitProvider>
+        </StarknetProvider>
       </ThirdwebProvider>
     </QueryClientProvider>
   );
