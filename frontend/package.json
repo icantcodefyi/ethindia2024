@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.7",
-    "@aptos-labs/ts-sdk": "^1.33.1",
-    "@aptos-labs/wallet-adapter-react": "^3.7.9",
     "@coinbase/onchainkit": "^0.35.8",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
@@ -23,9 +21,6 @@
     "@gobob/sats-wagmi": "^0.3.16",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.1",
-    "@martianwallet/aptos-wallet-adapter": "^0.0.5",
-    "@nightlylabs/aptos-wallet-adapter-plugin": "^0.2.12",
-    "@openblockhq/aptos-wallet-adapter": "^0.1.5",
     "@polkadot/api": "^15.0.1",
     "@polkadot/extension-dapp": "^0.57.1",
     "@pontem/wallet-adapter-plugin": "^0.2.1",
